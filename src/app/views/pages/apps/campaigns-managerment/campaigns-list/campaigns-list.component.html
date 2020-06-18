@@ -1,0 +1,139 @@
+<kt-portlet class="list-campaign">
+	<kt-portlet-header [title]="'Danh sách chiến dịch'" [class]="'kt-portlet__head--lg'" [viewLoading$]="dataSource.loading$">
+		<ng-container ktPortletTools>
+			<button ktHasPermissions [functionCode]="'CAMPAIGN'" [serviceCode]="'CAMPAIGN_CREATE'" (click)="createCampaign()" mat-raised-button color="primary">{{'BUTTON.ADD' | translate}}</button>
+		</ng-container>
+	</kt-portlet-header>
+	<kt-portlet-body>
+		<div class="kt-form">
+			<div class="kt-form__filtration kt-margin-b-0">
+				<form class="row align-items-center" (ngSubmit)="search()">
+					<div class="col-md-2 kt-margin-b-10">
+						<div class="date-picker">
+							<input matInput [matDatepicker]="startDate" class="input-date" placeholder="Ngày bắt đầu" [(ngModel)]="startdate" name="startdate">
+							<mat-datepicker-toggle matSuffix [for]="startDate"></mat-datepicker-toggle>
+							<mat-datepicker #startDate></mat-datepicker>					
+						</div>
+					</div>
+					<div class="col-md-2 kt-margin-b-10">
+						<div class="date-picker">
+							<input matInput [matDatepicker]="endDate" class="input-date" placeholder="Ngày kết thúc" [(ngModel)]="enddate" name="enddate">
+							<mat-datepicker-toggle matSuffix [for]="endDate"></mat-datepicker-toggle>
+							<mat-datepicker #endDate></mat-datepicker>					
+						</div>
+					</div>
+					<div class="col-md-2 kt-margin-b-10">
+						<angular2-multiselect [data]="campaignStatusAll"  [settings]="statusSettings" name="campaignStatus" [(ngModel)]="campaignStatus">
+						</angular2-multiselect>
+					</div>
+					<div class="col-md-2 kt-margin-b-10">
+						<input type="text" class="form-control" name="searchInput" [(ngModel)]="searchInput" placeholder="{{'BUTTON.SEARCH' | translate}}">
+					</div>
+					<div class="col-md-2 kt-margin-b-10">
+						<button type="submit" mat-raised-button color="primary">
+							<span>{{'BUTTON.SEARCH' | translate}}</span>
+						</button>
+					</div>
+				</form>
+			</div>
+			<!-- end::FILTERS -->
+
+			<!-- start::GROUP ACTIONS -->
+			<!-- Group actions list: 'Delete selected' | 'Fetch selected' | 'Update status for selected' -->
+			<!-- Group actions are shared for all LISTS -->
+			<div ktHasPermissions [functionCode]="'CAMPAIGN'" [serviceCode]="'CAMPAIGN_DELETE'">
+				<div class="row align-items-center collapse" [ngClass]="{'show' : selection.selected.length > 1}">
+					<!-- We show 'Group Actions' div if smth are selected -->
+					<div class="col-xl-12">
+						<div class="kt-form__group">
+							<div class="kt-form__control">
+								<button 
+									(click)="deleteCampaigns()"
+									type="button" 
+									mat-raised-button
+									color="accent"
+									class="mat-button-mt-4">
+									<mat-icon>delete</mat-icon>
+									<span>{{'ACTION.DELETE_ALL' | translate}}</span>
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- end::GROUP ACTIONS -->
+		</div>
+		<!-- end::FILTERS & GROUP ACTIONS -->
+
+		<!-- MATERIAL TABLE | Binded to datasources -->
+		<!-- See off.documentations 'https://material.angular.io/components/table/overview' -->
+		<div class="mat-table__wrapper">
+			<mat-table class="lmat-elevation-z8" #table [dataSource]="dataSource" matSort #sort1="matSort" matSortActive="campaignId" matSortDirection="asc" matSortDisableClear>
+				<ng-container matColumnDef="select">
+					<mat-header-cell *matHeaderCellDef class="mat-column-checkbox">
+						<mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selection.hasValue() && isAllSelected()" [indeterminate]="selection.hasValue() && !isAllSelected()">
+						</mat-checkbox>
+					</mat-header-cell>
+					<mat-cell *matCellDef="let row" class="mat-column-checkbox">
+						<mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? selection.toggle(row) : null" [checked]="selection.isSelected(row)">
+						</mat-checkbox>
+					</mat-cell>
+				</ng-container>
+				<ng-container matColumnDef="stt" class="id-cell">
+					<mat-header-cell *matHeaderCellDef>{{'TABLE.NO' | translate}}</mat-header-cell>
+					<mat-cell *matCellDef="let campaign; let i = index;">{{ (i+1) + (paginator.pageIndex * paginator.pageSize)}}</mat-cell>
+				</ng-container>
+				<ng-container matColumnDef="campaignCode">
+					<mat-header-cell *matHeaderCellDef>{{'CAMPAIGNS.ID' | translate}}</mat-header-cell>
+					<mat-cell *matCellDef="let campaign">{{campaign.campaignCode}}</mat-cell>
+				</ng-container>
+				<ng-container matColumnDef="campaignTitle">
+					<mat-header-cell *matHeaderCellDef>{{'GENERAL.TITLE' | translate}}</mat-header-cell>
+					<mat-cell *matCellDef="let campaign">{{campaign.campaignTitle}}</mat-cell>
+				</ng-container>
+				<ng-container matColumnDef="time">
+					<mat-header-cell *matHeaderCellDef>{{'ADDRESS.ADDRESS_LINE' | translate}}</mat-header-cell>
+					<mat-cell *matCellDef="let campaign">{{campaign.campaignAddress}}
+					</mat-cell>
+				</ng-container>
+				<ng-container matColumnDef="createdBy">
+					<mat-header-cell *matHeaderCellDef>{{'DCNDS.CREATEBY' | translate}}</mat-header-cell>
+					<mat-cell *matCellDef="let campaign">{{campaign.createdBy}}</mat-cell>
+				</ng-container>
+				<ng-container matColumnDef="statusCode">
+					<mat-header-cell *matHeaderCellDef>{{'GENERAL.STATUS' | translate}}</mat-header-cell>
+					<mat-cell *matCellDef="let campaign">
+						<span class="kt-badge kt-badge--inline kt-badge--pill kt-badge--{{ getItemCssClassByStatus(campaign.statusCode) }} kt-badge--wide">{{  getItemStatusString(campaign.statusCode) }}</span>
+					</mat-cell>
+				</ng-container>
+				<ng-container matColumnDef="actions">
+					<mat-header-cell *matHeaderCellDef>{{'GENERAL.ACTIONS' | translate}}</mat-header-cell>
+					<mat-cell *matCellDef="let campaign">
+						<button ktHasPermissions [functionCode]="'CAMPAIGN'" [serviceCode]="'CAMPAIGN_MODIFY'" mat-icon-button color="primary" matTooltip="{{'ACTION.EDIT' | translate}}" type="button" (click)="editCampaign(campaign)" >
+							<mat-icon>create</mat-icon>
+						</button>
+						<button ktHasPermissions [functionCode]="'CAMPAIGN'" [serviceCode]="'CAMPAIGN_APPROVE'" disabled="{{campaign.statusCode == 'A' ? 'true' : 'false'}}" mat-icon-button color="primary" matTooltip="{{'ACTION.APPROVE' | translate}}" type="button" (click)="approveCampaign(campaign)">
+							<i class="fas fa-check-circle"></i>
+						</button>
+						<button ktHasPermissions [functionCode]="'CAMPAIGN'" [serviceCode]="'CAMPAIGN_REJECT'" disabled="{{campaign.statusCode == 'R' ||  campaign.statusCode == 'A' ? 'true' : 'false'}}" mat-icon-button color="warn" matTooltip="{{'ACTION.REFUSE' | translate}}" type="button" (click)="refuseCampaign(campaign)">
+							<i class="fas fa-ban"></i>
+						</button>
+						<button ktHasPermissions [functionCode]="'CAMPAIGN'" [serviceCode]="'CAMPAIGN_DELETE'" mat-icon-button color="warn" matTooltip="{{'ACTION.DELETE' | translate}}" type="button" (click)="deleteCampaign(campaign)">
+							<mat-icon>delete</mat-icon>
+						</button>
+					</mat-cell>
+				</ng-container>
+				<mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+				<mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+			</mat-table>
+			<div class="mat-table__message" *ngIf="!dataSource.hasItems">{{'TABLE.NODATA' | translate}}</div>
+			<div class="mat-table__message" *ngIf="dataSource.isPreloadTextViewed$ | async">{{'TABLE.WAIT' | translate}}</div>
+		</div>
+
+		<div class="mat-table__bottom">
+			<mat-spinner [diameter]="20" *ngIf="dataSource.loading$ | async"></mat-spinner>
+			<mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 15]" (page)="pageEvent($event)" [length]="dataSource.paginatorTotal$ | async" [showFirstLastButtons]="true"></mat-paginator>
+		</div>
+	</kt-portlet-body>
+	<!-- end::Body -->
+</kt-portlet>

@@ -1,0 +1,64 @@
+<kt-portlet class="view-donate">
+	<kt-portlet-header [title]="'Thông tin kế hoạch tài trợ'" [class]="'kt-portlet__head--lg'">
+	</kt-portlet-header>
+	<kt-portlet-body>
+		<div class="row">
+            <div class="col-md-12 kt-margin-bottom-20-mobile form-group">
+                <label><b>{{ 'DONATES.CAMPAIGN_NAME' | translate }}</b> Nguyễn Văn A - Nạn nhân chất độc màu da cam.</label>
+            </div>
+            <div class="col-md-12 kt-margin-bottom-20-mobile form-group">
+                <span><b>Hình thức hỗ trợ:</b></span> 
+                <mat-checkbox color="primakey" class="kt-margin-l-10" disabled [(ngModel)]="selfShipping">Tự vận chuyển</mat-checkbox>
+                <mat-checkbox color="primakey" class="kt-margin-l-10" disabled [(ngModel)]="VNPost">Qua VNPost</mat-checkbox>
+            </div>
+            <div class="col-md-12 kt-margin-bottom-20-mobile form-group">
+                <label><b>Thông tin người tài trợ: </b> </label>
+                <div class="row kt-margin-bottom-20 form-group">
+                    <div class="col-md-4">
+                        <input type="text" class="form-control" disabled placeholder="Nhập họ và tên" onkeydown="return event.key != 'Enter';"/>
+                    </div>
+                    <div class="col-md-4">
+                        <input type="text" class="form-control" disabled placeholder="Nhập số điện thoại" onkeydown="return event.key != 'Enter';"/>
+                    </div>
+                    <div class="col-md-4">
+                        <input type="text" class="form-control" disabled placeholder="Nhập email" onkeydown="return event.key != 'Enter';"/>
+                    </div>
+                </div>
+                <mat-checkbox color="primakey" class="kt-margin-l-10" disabled [(ngModel)]="showList">Hiển thị tên lên danh sách nhà tài trợ</mat-checkbox>
+            </div>
+            <div class="col-md-12 kt-margin-bottom-20-mobile form-group">
+                <label><b>Lời chúc:</b></label>
+                <input type="text" class="form-control" disabled placeholder="Nhập lời chúc cho địa chỉ nhân đạo" onkeydown="return event.key != 'Enter';"/>
+            </div>
+            <div class="col-md-12 kt-margin-bottom-20-mobile form-group">
+                <label><b>Mô tả:</b></label>
+                <div class="row">
+                    <div class="col-md-12 kt-margin-bottom-20-mobile form-group">
+                        <input type="text" class="form-control" disabled placeholder="Nhập mô tả chi tiết về thông tin tài trợ (tiền, quần áo, sách vơ,...)" onkeydown="return event.key != 'Enter';"/>
+                    </div>
+                    <div class="col-md-4">
+                        <input type="text" class="form-control" disabled placeholder="Giá trị ước tính" onkeydown="return event.key != 'Enter';"/>
+                    </div>
+                    <div class="col-md-4 box-time">
+                        <input matInput [matDatepicker]="picker" disabled class="form-control" placeholder="Thời gian giao" onkeydown="return event.key != 'Enter';"/>
+                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-datepicker #picker></mat-datepicker>
+                    </div>
+                    <div class="col-md-4">
+                        <input type="text" class="form-control" disabled placeholder="Ghi chú" onkeydown="return event.key != 'Enter';"/>
+                    </div>
+                </div>
+            </div>
+            <mat-checkbox color="primakey" class="kt-margin-l-10" disabled checked="true">Tôi đồng ý với điều khoản sử dụng.</mat-checkbox>
+        </div>
+        <div class="row button-donate">
+            <a [routerLink]="['/donates-managerment/list']" class="btn btn-secondary kt-margin-r-10" mat-raised-button>
+                <i class="la la-arrow-left"></i>
+                <span class="kt-hidden-mobile">{{ 'BUTTON.BACK' | translate }}</span>
+            </a>
+            <button (click)="onSubmitForm()" mat-raised-button color="primary">Duyệt</button>
+            <button (click)="createDonate()" mat-raised-button color="primary">Từ chối</button>
+            <button (click)="spamDonate()" mat-raised-button color="primary">Spam</button>
+        </div>
+	</kt-portlet-body>
+</kt-portlet>

@@ -1,0 +1,270 @@
+<kt-portlet class="list-dcnd">
+	<kt-portlet-header [title]="'Danh sách địa chỉ nhân đạo'" [class]="'kt-portlet__head--lg'" [viewLoading$]="dataSource.loading$">
+		<ng-container ktPortletTools>
+			<button
+				ktHasPermissions
+				[functionCode]="'DCND'"
+				[serviceCode]="'DCND_CREATE'"
+				(click)="createDcnd()"
+				mat-raised-button
+				color="primary"
+			>
+				{{ 'BUTTON.ADD' | translate }}
+			</button>
+		</ng-container>
+	</kt-portlet-header>
+	<kt-portlet-body>
+		<div class="kt-form">
+			<div class="kt-form__filtration kt-margin-b-0">
+				<form class="row align-items-center" name="searchForm" (ngSubmit)="search()">
+					<div class="col-sm-4 col-md-3 col-lg-3 col-xl-2">
+						<div class="form-group">
+							<label>{{ 'ADDRESS.PROVINCE' | translate }}</label>
+							<angular2-multiselect
+								[data]="provinceList"
+								name="province"
+								[(ngModel)]="province"
+								[settings]="provinceSettings"
+								(onSelect)="onItemSelect($event, 'province')"
+								(onDeSelectAll)="onDeSelectAll('province')"
+								onkeydown="return event.key != 'Enter';"
+							>
+							</angular2-multiselect>
+						</div>
+					</div>
+					<div class="col-sm-4 col-md-3 col-lg-3 col-xl-2">
+						<div class="form-group">
+							<label>{{ 'ADDRESS.DISTRICT' | translate }}</label>
+							<angular2-multiselect
+								[data]="districtList"
+								name="district"
+								[(ngModel)]="district"
+								[settings]="districtSettings"
+								(onSelect)="onItemSelect($event, 'district')"
+								(onDeSelectAll)="onDeSelectAll('district')"
+								onkeydown="return event.key != 'Enter';"
+							>
+							</angular2-multiselect>
+						</div>
+					</div>
+					<div class="col-sm-4 col-md-3 col-lg-3 col-xl-2">
+						<div class="form-group">
+							<label>{{ 'ADDRESS.WARD' | translate }}</label>
+							<angular2-multiselect
+								[data]="wardList"
+								name="ward"
+								[(ngModel)]="ward"
+								[settings]="wardSettings"
+								(onSelect)="onItemSelect($event, 'ward')"
+								(onDeSelectAll)="onDeSelectAll('ward')"
+								onkeydown="return event.key != 'Enter';"
+							>
+							</angular2-multiselect>
+						</div>
+					</div>
+					<div class="col-sm-4 col-md-3 col-lg-3 col-xl-2">
+						<div class="form-group">
+							<label>{{ 'GENERAL.STATUS' | translate }}</label>
+							<angular2-multiselect [data]="dcndStatusAll" name="status" [(ngModel)]="dcndStatus" [settings]="statusSettings">
+							</angular2-multiselect>
+						</div>
+					</div>
+					<div class="col-md-3  col-lg-3 col-xl-2 kt-margin-bottom-10-mobile form-group">
+						<label>{{ 'BUTTON.SEARCH' | translate }}</label>
+						<input
+							type="text"
+							class="form-control"
+							name="searchInput"
+							[(ngModel)]="searchInput"
+							placeholder="{{ 'BUTTON.SEARCH' | translate }}"
+						/>
+					</div>
+					<div class="col-md-3  col-lg-3 col-xl-2 kt-margin-bottom-10-mobile">
+						<button type="submit" mat-raised-button color="primary">
+							<span>{{ 'BUTTON.SEARCH' | translate }}</span>
+						</button>
+					</div>
+				</form>
+			</div>
+			<div ktHasPermissions [functionCode]="'DCND'" [serviceCode]="'DCND_DELETE'">
+				<div class="row align-items-center collapse kt-form__group-actions" [ngClass]="{ show: selection.selected.length > 1 }">
+					<div class="col-xl-12">
+						<div class="kt-form__group kt-form__group--inline">
+							<div class="kt-form__control kt-form__group--inline">
+								<button (click)="deleteDcnds()" type="button" mat-raised-button color="accent" class="mat-button-mt-4">
+									<mat-icon>delete</mat-icon>
+									<span>{{ 'ACTION.DELETE_ALL' | translate }}</span>
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="mat-table__wrapper">
+			<mat-table
+				class="lmat-elevation-z8"
+				#table
+				[dataSource]="dataSource"
+				matSort
+				#sort1="matSort"
+				matSortActive="dcndId"
+				matSortDirection="asc"
+				matSortDisableClear
+			>
+				<ng-container matColumnDef="select">
+					<mat-header-cell *matHeaderCellDef class="mat-column-checkbox">
+						<mat-checkbox
+							(change)="$event ? masterToggle() : null"
+							[checked]="selection.hasValue() && isAllSelected()"
+							[indeterminate]="selection.hasValue() && !isAllSelected()"
+						>
+						</mat-checkbox>
+					</mat-header-cell>
+					<mat-cell *matCellDef="let row" class="mat-column-checkbox">
+						<mat-checkbox
+							(click)="$event.stopPropagation()"
+							(change)="$event ? selection.toggle(row) : null"
+							[checked]="selection.isSelected(row)"
+						>
+						</mat-checkbox>
+					</mat-cell>
+				</ng-container>
+				<ng-container matColumnDef="stt" class="id-cell">
+					<mat-header-cell *matHeaderCellDef>{{ 'TABLE.NO' | translate }}</mat-header-cell>
+					<mat-cell *matCellDef="let dcnd; let i = index">{{ i + 1 + paginator.pageIndex * paginator.pageSize }}</mat-cell>
+				</ng-container>
+				<ng-container matColumnDef="humanityCode">
+					<mat-header-cell *matHeaderCellDef>{{ 'DCNDS.ID' | translate }}</mat-header-cell>
+					<mat-cell *matCellDef="let dcnd">{{ dcnd.humanityCode }}</mat-cell>
+				</ng-container>
+				<ng-container matColumnDef="humanityTitle">
+					<mat-header-cell *matHeaderCellDef>{{ 'GENERAL.TITLE' | translate }}</mat-header-cell>
+					<mat-cell *matCellDef="let dcnd">{{ dcnd.humanityTitle }}</mat-cell>
+				</ng-container>
+				<ng-container matColumnDef="humanityAddress">
+					<mat-header-cell *matHeaderCellDef>{{ 'ADDRESS.ADDRESS_LINE' | translate }}</mat-header-cell>
+					<mat-cell *matCellDef="let dcnd">{{ dcnd.humanityAddress }} </mat-cell>
+				</ng-container>
+				<ng-container matColumnDef="humanityReceive">
+					<mat-header-cell *matHeaderCellDef>{{ 'DCNDS.RECEIVER' | translate }}</mat-header-cell>
+					<mat-cell *matCellDef="let dcnd">{{ dcnd.humanityReceive }}</mat-cell>
+				</ng-container>
+				<ng-container matColumnDef="createdBy">
+					<mat-header-cell *matHeaderCellDef>{{ 'DCNDS.CREATEBY' | translate }}</mat-header-cell>
+					<mat-cell *matCellDef="let dcnd">{{ dcnd.createdBy }}</mat-cell>
+				</ng-container>
+				<ng-container matColumnDef="statusCode">
+					<mat-header-cell *matHeaderCellDef>{{ 'GENERAL.STATUS' | translate }}</mat-header-cell>
+					<mat-cell *matCellDef="let dcnd">
+						<span
+							class="kt-badge kt-badge--inline kt-badge--pill kt-badge--{{
+								getItemCssClassByStatus(dcnd.statusCode)
+							}} kt-badge--wide"
+							>{{ getItemStatusString(dcnd.statusCode) }}</span
+						>
+					</mat-cell>
+				</ng-container>
+				<ng-container matColumnDef="actions">
+					<mat-header-cell *matHeaderCellDef>{{ 'GENERAL.ACTIONS' | translate }}</mat-header-cell>
+					<mat-cell *matCellDef="let dcnd">
+						<button
+							ktHasPermissions
+							[functionCode]="'DCND'"
+							[serviceCode]="'DCND_MODIFY'"
+							mat-icon-button
+							color="primary"
+							matTooltip="{{ 'ACTION.EDIT' | translate }}"
+							type="button"
+							(click)="editDcnd(dcnd)"
+						>
+							<mat-icon>create</mat-icon>
+						</button>
+						<button
+							ktHasPermissions
+							[functionCode]="'DCND'"
+							[serviceCode]="'DCND_VERIFY'"
+							mat-icon-button
+							color="primary"
+							disabled="{{ dcnd.statusCode == 'V' || dcnd.statusCode == 'A' || dcnd.statusCode == 'R' ? 'true' : 'false' }}"
+							matTooltip="{{ 'ACTION.VERIFY' | translate }}"
+							type="button"
+							(click)="verifyDcnd(dcnd)"
+						>
+							<i class="fas fa-user-check"></i>
+						</button>
+						<button
+							ktHasPermissions
+							[functionCode]="'DCND'"
+							[serviceCode]="'DCND_APPROVE'"
+							mat-icon-button
+							color="primary"
+							disabled="{{
+								dcnd.statusCode == 'A' || dcnd.humanityUpload == false || dcnd.isContent == false || dcnd.isNarrative == false
+									? 'true'
+									: 'false'
+							}}"
+							matTooltip="{{ 'ACTION.APPROVE' | translate }}"
+							type="button"
+							(click)="approveDcnd(dcnd)"
+						>
+							<i class="fas fa-check-circle"></i>
+						</button>
+						<button
+							ktHasPermissions
+							[functionCode]="'DCND'"
+							[serviceCode]="'DCND_DENY'"
+							mat-icon-button
+							color="warn"
+							disabled="{{ dcnd.statusCode == 'R' || dcnd.statusCode == 'A' ? 'true' : 'false' }}"
+							matTooltip="{{ 'ACTION.REFUSE' | translate }}"
+							type="button"
+							(click)="refuseDcnd(dcnd)"
+						>
+							<i class="fas fa-ban"></i>
+						</button>
+						<button
+							ktHasPermissions
+							[functionCode]="'DCND'"
+							[serviceCode]="'DCND_SPAM'"
+							mat-icon-button
+							color="warn"
+							matTooltip="{{ 'ACTION.SPAM' | translate }}"
+							disabled="{{ dcnd.statusCode == 'S' || dcnd.statusCode == 'A' ? 'true' : 'false' }}"
+							type="button"
+							(click)="spamDcnd(dcnd)"
+						>
+							<i class="fas fa-exclamation-triangle"></i>
+						</button>
+						<button
+							ktHasPermissions
+							[functionCode]="'DCND'"
+							[serviceCode]="'DCND_DELETE'"
+							mat-icon-button
+							color="warn"
+							matTooltip="{{ 'ACTION.DELETE' | translate }}"
+							type="button"
+							(click)="deleteDcnd(dcnd)"
+						>
+							<mat-icon>delete</mat-icon>
+						</button>
+					</mat-cell>
+				</ng-container>
+				<mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+				<mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+			</mat-table>
+			<div class="mat-table__message" *ngIf="!dataSource.hasItems">{{ 'TABLE.NODATA' | translate }}</div>
+			<div class="mat-table__message" *ngIf="dataSource.isPreloadTextViewed$ | async">{{ 'TABLE.WAIT' | translate }}</div>
+		</div>
+		<div class="mat-table__bottom">
+			<mat-spinner [diameter]="20" *ngIf="dataSource.loading$ | async"></mat-spinner>
+			<mat-paginator
+				[pageSize]="10"
+				[pageSizeOptions]="[5, 10, 15]"
+				(page)="pageEvent($event)"
+				[length]="dataSource.paginatorTotal$ | async"
+				[showFirstLastButtons]="true"
+			></mat-paginator>
+		</div>
+	</kt-portlet-body>
+</kt-portlet>

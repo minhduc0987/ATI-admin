@@ -1,0 +1,112 @@
+<div class="kt-portlet" [ngClass]="{ 'kt-portlet--body-progress' : '', 'kt-portlet--body-progress-overlay' : '' }">
+    <div class="kt-portlet__head kt-portlet__head__custom">
+        <div class="kt-portlet__head-label" *ngIf="role">
+            <h3 class="kt-portlet__head-title">{{getTitle()}}</h3>
+        </div>
+    </div>
+    <div>
+        <div class="kt-form">
+            <div class="kt-portlet__body">
+                <div class="row">
+                    <div class="col-md-6" style="padding-right: 35px!important;">
+                        <kt-alert *ngIf="hasCheckUsersErrors" type="warn" [duration]="30000" [showCloseButton]="true"
+                        (close)="onAlertCloseCheck($event)">
+                        {{messagecheckUser}}
+                    </kt-alert>
+                    </div>
+                    <div class="col-md-6"  style="padding-left: 35px!important;">
+                        <kt-alert *ngIf="hasUnCheckUsersErrors" type="warn" [duration]="30000" [showCloseButton]="true"
+                            (close)="onAlertClose($event)">
+                            {{messageUncheckUser}}
+                        </kt-alert>
+                    </div>
+                </div>
+                <div class="cover-role">
+                    <div class="left w-role  pb-3">
+                        <p>{{'USER_ROLE.TITLE_USER_UNCHECK' | translate}}</p>
+                        <div class="pl-3 pr-3" [ngStyle]="{'height': users.length === 0 && usersRole.length === 0 ? 'auto' : '380px' }">
+                            <form action="" class="mb-3" (ngSubmit)="loadUsersList()">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" placeholder="Tìm kiếm" name="searchUser"
+                                        [(ngModel)]="searchUser" aria-describedby="basic-addon2">
+                                    <div class="input-group-append">
+                                        <button mat-icon-button color="primary" type="submit">
+                                            <i class="fa fa-search"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                            <mat-checkbox [checked]="isCheckAllUser()" [disabled]="users.length === 0" (change)="isSelectAllUsers($event)">
+                            </mat-checkbox> <label class="ml-2">Chọn tất cả</label>
+                            <div *ngFor="let item of users" class="role-user-checkbox">
+                                <mat-checkbox [checked]="ischeckUser(item)" (change)="isSelectedUser(item, $event)">
+                                </mat-checkbox>
+                                <label class="ml-2" for="">{{item.username}}_<i
+                                        style="font-size: 12px;">{{item.email}}</i></label>
+                            </div>
+                        </div>
+                        <mat-paginator [length]="totalUsers" [pageSize]="pageSize" (page)="pageEvent($event)" [showFirstLastButtons]="true">
+                        </mat-paginator>
+                    </div>
+                    <div class="center d-flex flex-column bd-highlight">
+                        <button class="btn btn-icon-only btn-primary pt-1 pb-1" [disabled]="isDisableUser() || isDisableCheck || !isDisableUserRole()"
+                            (click)="onSaveUserCheck()">
+                            <svg class="mat-paginator-icon" focusable="false" viewBox="0 0 24 24">
+                                <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path>
+                            </svg>
+                        </button>
+                        <button class="btn btn-icon-only btn-primary mt-2 pt-1 pb-1" [disabled]="isDisableUserRole() || isDisableUncheck || !isDisableUser()"
+                            (click)="onSaveUserUnCheck()">
+                            <svg class="mat-paginator-icon" focusable="false" viewBox="0 0 24 24">
+                                <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="right w-role  pb-3">
+                        <p>{{'USER_ROLE.TITLE_USER_CHECK' | translate}}</p>
+                        <div class="pl-3 pr-3" [ngStyle]="{'height': users.length === 0 && usersRole.length === 0 ? 'auto' : '380px' }">
+                            <form action="" class="mb-3" (ngSubmit)="loadUserRole()">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" placeholder="Tìm kiếm" name="searchUserRole"
+                                        [(ngModel)]="searchUserRole" aria-describedby="basic-addon2">
+                                    <div class="input-group-append">
+                                        <button mat-icon-button color="primary" type="submit">
+                                            <i class="fa fa-search"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                            <mat-checkbox [checked]="isCheckAllUserRole()" [disabled]="usersRole.length === 0" (change)="isSelectAllUsersRole($event)">
+                            </mat-checkbox> <label class="ml-2">Chọn tất cả</label>
+                            <div *ngFor="let item of usersRole" class="role-user-checkbox">
+                                <mat-checkbox [checked]="ischeckUserRole(item)"
+                                    (change)="isSelectedUserRole(item, $event)">
+                                </mat-checkbox>
+                                <label class="ml-2" for="">{{item.username}}_<i
+                                        style="font-size: 12px;">{{item.email}}</i></label>
+                            </div>
+                        </div>
+                        <mat-paginator [length]="totalUsersRole" [pageSize]="pageSizeUserRole" [showFirstLastButtons]="true"
+                            (page)="pageEventUserRole($event)">
+                        </mat-paginator>
+                    </div>
+                </div>
+            </div>
+            <div class="kt-portlet__foot kt-portlet__foot--fit kt-portlet__no-border">
+                <div class="kt-form__actions kt-form__actions--solid">
+                    <div class="row text-right">
+                        <div class="col-lg-12">
+                            <button type="button" mat-raised-button [mat-dialog-close]="data.animal" cdkFocusInitial
+                                matTooltip="Đóng">
+                                {{'BUTTON.CANCEL' | translate}}
+                            </button>&nbsp;
+                            <!-- <button type="button" mat-raised-button color="primary" matTooltip="Lưu thay đổi">
+                                {{'BUTTON.SAVE' | translate}}
+                            </button> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

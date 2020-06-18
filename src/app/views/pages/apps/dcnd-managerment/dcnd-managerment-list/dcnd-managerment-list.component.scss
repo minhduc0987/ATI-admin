@@ -1,0 +1,60 @@
+.list-dcnd {
+	.mat-column-actions {
+		flex: 0 0 180px;
+	}
+
+	.mat-column-statusCode {
+		flex: 0 0 87px;
+	}
+
+	.mat-column-humanityCode {
+		flex: 0 0 70px;
+	}
+
+	.mat-column-createdBy {
+		flex: 0 0 100px;
+	}
+
+	.mat-column-humanityReceive {
+		flex: 0 0 140px;
+	}
+
+	.mat-column-checkbox {
+		flex: 0 0 40px;
+	}
+
+	.mat-column-stt {
+		flex: 0 0 40px;
+	}
+
+	.c-btn.disabled {
+		background: #f7f8fa !important;
+	}
+
+	.mat-header-row {
+
+		.mat-column-actions,
+		.mat-column-humanityCode,
+		.mat-column-stt {
+			justify-content: center;
+		}
+	}
+
+	.mat-row {
+
+		.mat-column-stt,
+		.mat-column-humanityCode {
+			justify-content: center;
+		}
+	}
+
+	.cuppa-dropdown {
+		.c-btn {
+			padding-right: 40px;
+		}
+	}
+
+	.mat-icon-button {
+		width: 30px;
+	}
+}

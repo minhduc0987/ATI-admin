@@ -1,0 +1,150 @@
+<kt-portlet class="list-user">
+	<!-- PORTLET LOADING | Binded to TABLE Datasource -->
+	<!-- See prop => '~/core/_crud/models/data-sources/_base.datasource.ts' (loading$) -->
+	<kt-portlet-header [title]="'Danh sách người dùng'" [class]="'kt-portlet__head--lg'" [viewLoading$]="dataSource.loading$">
+		<ng-container ktPortletTools>
+			<button ktHasPermissions [functionCode]="'USER'" [serviceCode]="'USER_CREATE'" (click)="addUser()" mat-raised-button color="primary">{{'BUTTON.ADD' | translate}}</button>
+			<!-- Buttons (Material Angular) | See off.documenations 'https://material.angular.io/components/button/overview' -->
+			<!-- mat-raised-button | Rectangular contained button w/ elevation  -->
+		</ng-container>
+	</kt-portlet-header>
+	<!-- end::Header -->
+	<!-- start::Body (attribute: ktPortletBody) -->
+	<kt-portlet-body>
+		<!-- start::FILTERS & GROUP ACTIONS -->
+		<div class="kt-form">
+			<!-- start::FILTERS -->
+			<!-- <div class="kt-form__filtration"> -->
+			<form class="row align-items-center" name="searchForm" (ngSubmit)="search()">
+				<div class="col-md-2 kt-margin-bottom-10-mobile form-group">
+					<label>{{'GENERAL.STATUS' | translate}}</label>
+					<angular2-multiselect [data]="statusAll"  [settings]="settingStatus" class="delete" name="status" [(ngModel)]="userStatus">
+					</angular2-multiselect>
+				</div>
+				<div class="col-md-2 kt-margin-bottom-10-mobile form-group">
+					<label>{{'USERS.TYPE' | translate}}</label>
+					<angular2-multiselect [data]="userTypeAll"  [settings]="settingUserType" class="delete" name="userType" [(ngModel)]="userType">
+					</angular2-multiselect>
+				</div>
+				<div class="col-md-2 kt-margin-bottom-10-mobile form-group">
+					<label>{{'BUTTON.SEARCH' | translate}}</label>
+					<input type="text" class="form-control" name="searchInput" [(ngModel)]="searchInput" placeholder="{{'BUTTON.SEARCH' | translate}}">
+				</div>
+				<div class="col-md-2 kt-margin-bottom-10-mobile">
+					<button type="submit" mat-raised-button color="primary">
+						<span>{{'BUTTON.SEARCH' | translate}}</span>
+					</button>
+				</div>
+			</form>
+			<!-- </div> -->
+			<!-- end::FILTERS -->
+
+			<!-- start::GROUP ACTIONS -->
+			<!-- Group actions list: 'Delete selected' | 'Fetch selected' | 'Update status for selected' -->
+			<!-- Group actions are shared for all LISTS -->
+			<div ktHasPermissions [functionCode]="'USER'" [serviceCode]="'USER_DELETE'">
+				<div class="row align-items-center collapse kt-form__group-actions" [ngClass]="{'show' : selection.selected.length > 1}">
+					<div class="col-xl-12">
+						<div class="kt-form__group kt-form__group--inline">
+							<div class="kt-form__control kt-form__group--inline">
+								<button (click)="deleteUsers()"
+									mat-raised-button
+									color="accent"
+									class="mat-button-mt-4">
+									<mat-icon>delete</mat-icon>
+									<span>{{'ACTION.DELETE_ALL' | translate}}</span>
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- end::GROUP ACTIONS -->
+		</div>
+		<!-- end::FILTERS & GROUP ACTIONS -->
+
+		<!-- MATERIAL TABLE | Binded to datasources -->
+		<!-- See off.documentations 'https://material.angular.io/components/table/overview' -->
+		<div class="mat-table__wrapper">
+			<mat-table class="lmat-elevation-z8" #table [dataSource]="dataSource" matSort #sort1="matSort" matSortActive="userId" matSortDirection="asc" matSortDisableClear>
+				<!-- Checkbox Column -->
+
+				<!-- Table with selection -->
+				<!-- https://run.stackblitz.com/api/angular/v1?file=app%2Ftable-selection-example.ts -->
+				<ng-container matColumnDef="select">
+					<mat-header-cell *matHeaderCellDef class="mat-column-checkbox">
+						<mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selection.hasValue() && isAllSelected()" [indeterminate]="selection.hasValue() && !isAllSelected()">
+						</mat-checkbox>
+					</mat-header-cell>
+					<mat-cell *matCellDef="let row" class="mat-column-checkbox">
+						<mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? selection.toggle(row) : null" [checked]="selection.isSelected(row)">
+						</mat-checkbox>
+					</mat-cell>
+				</ng-container>
+				<ng-container matColumnDef="stt" class="id-cell">
+					<!-- ATTRIBUTE   for sorting | https://material.angular.io/components/sort/overview -->
+					<mat-header-cell *matHeaderCellDef >{{'TABLE.NO' | translate}}</mat-header-cell>
+					<mat-cell *matCellDef="let user; let i = index;">{{ i+1 + (paginator.pageIndex * paginator.pageSize)}}</mat-cell>
+				</ng-container>
+				<ng-container matColumnDef="username">
+					<mat-header-cell *matHeaderCellDef >{{'AUTH.INPUT.USERNAME' | translate}}</mat-header-cell>
+					<mat-cell *matCellDef="let user">{{user.username}}</mat-cell>
+				</ng-container>
+				<ng-container matColumnDef="fullname">
+					<mat-header-cell *matHeaderCellDef >{{'AUTH.INPUT.FULLNAME' | translate}}</mat-header-cell>
+					<mat-cell *matCellDef="let user">{{user.fullname}}</mat-cell>
+				</ng-container>
+				<ng-container matColumnDef="email">
+					<mat-header-cell *matHeaderCellDef >{{'AUTH.INPUT.EMAIL' | translate}}</mat-header-cell>
+					<mat-cell *matCellDef="let user">
+						<span class="text-over">{{user.email}}</span>
+					</mat-cell>
+				</ng-container>
+				<ng-container matColumnDef="usertype">
+					<mat-header-cell *matHeaderCellDef >{{'USERS.TYPE' | translate}}</mat-header-cell>
+					<mat-cell *matCellDef="let user">
+						<span class="kt-badge kt-badge--inline kt-badge--pill kt-badge--{{ getItemCssClassByType(user.userType) }} kt-badge--wide">{{  getItemTypeString(user.userType) }}</span>
+					</mat-cell>
+				</ng-container>
+				<ng-container matColumnDef="status">
+					<mat-header-cell *matHeaderCellDef >{{'GENERAL.STATUS' | translate}}</mat-header-cell>
+					<mat-cell *matCellDef="let user">
+						<span class="kt-badge kt-badge--inline kt-badge--pill kt-badge--{{ getItemCssClassByStatus(user.status) }} kt-badge--wide">{{  getItemStatusString(user.status) }}</span>
+					</mat-cell>
+				</ng-container>
+				<ng-container matColumnDef="actions">
+					<mat-header-cell *matHeaderCellDef>{{'GENERAL.ACTIONS' | translate}}</mat-header-cell>
+					<mat-cell *matCellDef="let user">
+						<!-- <button (click)="resetPassword(user.userId)" mat-icon-button color="primary" matTooltip="{{'USERS.RESETPASS' | translate}}">
+							<mat-icon>
+									<i class="la la-cog"></i>
+							</mat-icon>
+						</button>&nbsp; -->
+							<button ktHasPermissions [functionCode]="'USER'" [serviceCode]="'USER_MODIFY'" (click)="editUser(user.userId)" mat-icon-button color="primary" matTooltip="{{'ACTION.EDIT' | translate}}">
+								<mat-icon>create</mat-icon>
+							</button>
+							<button ktHasPermissions [functionCode]="'USER'" [serviceCode]="'USER_DELETE'" mat-icon-button color="warn" matTooltip="{{'ACTION.DELETE' | translate}}" type="button" (click)="deleteUser(user)">
+								<mat-icon>delete</mat-icon>
+							</button>
+					</mat-cell>
+				</ng-container>
+				<mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+				<mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+			</mat-table>
+			<div class="mat-table__message" *ngIf="!dataSource.hasItems">{{'TABLE.NODATA' | translate}}</div>
+			<!-- Message for empty data  -->
+			<div class="mat-table__message" *ngIf="dataSource.isPreloadTextViewed$ | async">{{'TABLE.WAIT' | translate}}</div>
+		</div>
+
+		<!-- start: BOTTOM -->
+		<div class="mat-table__bottom">
+			<!-- MATERIAL SPINNER | Url: 'https://material.angular.io/components/progress-spinner/overview' -->
+			<mat-spinner [diameter]="20" *ngIf="dataSource.loading$ | async"></mat-spinner>
+			<!-- MATERIAL PAGINATOR | Binded to dasources -->
+			<!-- See off.documentations 'https://material.angular.io/components/paginator/overview' -->
+			<mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 15]" (page)="pageEvent($event)" [length]="dataSource.paginatorTotal$ | async" [showFirstLastButtons]="true"></mat-paginator>
+		</div>
+		<!-- end: BOTTOM -->
+	</kt-portlet-body>
+	<!-- end::Body -->
+</kt-portlet>

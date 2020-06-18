@@ -1,0 +1,114 @@
+<div class="kt-portlet select-dcnds modal-dialog-wrapper"
+    [ngClass]="{ 'kt-portlet--body-progress' : '', 'kt-portlet--body-progress-overlay' : '' }">
+    <span class="icon-close-dialog"><mat-icon matTooltip="Close" [mat-dialog-close]>close</mat-icon></span>
+    <div class="kt-form">
+        <div class="kt-portlet__body">
+            <div class="row">
+                <div class="col-md-6" style="padding-right: 35px!important;">
+                    <kt-alert *ngIf="false" type="warn" [duration]="30000" [showCloseButton]="true"
+                        (close)="onAlertCloseCheck($event)">
+                        Có lỗi khi chọn
+                    </kt-alert>
+                </div>
+                <div class="col-md-6" style="padding-left: 35px!important;">
+                    <kt-alert *ngIf="false" type="warn" [duration]="30000" [showCloseButton]="true"
+                        (close)="onAlertClose($event)">
+                        Có lỗi khi bỏ chọn
+                    </kt-alert>
+                </div>
+            </div>
+            <div class="cover-role">
+                <div class="left w-role  pb-3">
+                    <form name="searchForm" (ngSubmit)="loadDcndsList()">
+                        <p>Danh sách địa chỉ nhân đạo chưa được chọn</p>
+                        <div class="pl-3 pr-3">
+                            <div class="row">
+                                <div class="col-6 kt-margin-b-10">
+                                    <angular2-multiselect [data]="provinceList" name="province" [(ngModel)]="province"
+                                        [settings]="provinceSettings" (onSelect)="onItemSelect($event,'province')"
+                                        (onDeSelectAll)="onDeSelectAll('province')"
+                                        onkeydown="return event.key != 'Enter';">
+                                    </angular2-multiselect>
+                                </div>
+                                <div class="col-6 kt-margin-b-10">
+                                    <angular2-multiselect [data]="districtList" name="district" [(ngModel)]="district"
+                                        [settings]="districtSettings" (onSelect)="onItemSelect($event,'district')"
+                                        (onDeSelectAll)="onDeSelectAll('district')"
+                                        onkeydown="return event.key != 'Enter';">
+                                    </angular2-multiselect>
+                                </div>
+                                <div class="col-6 kt-margin-b-10">
+                                    <angular2-multiselect [data]="wardList" name="ward" [(ngModel)]="ward"
+                                        [settings]="wardSettings" (onSelect)="onItemSelect($event,'ward')"
+                                        (onDeSelectAll)="onDeSelectAll('ward')" onkeydown="return event.key != 'Enter';">
+                                    </angular2-multiselect>
+                                </div>
+                                <div class="col-6 kt-margin-b-10 box-search">
+                                    <input type="text" class="form-control" name="searchInputTwo" [(ngModel)]="searchInputTwo"
+                                        placeholder="{{'BUTTON.SEARCH' | translate}}">
+                                    <button mat-icon-button color="primary" type="submit">
+                                        <i class="fa fa-search"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <div>
+                        <!-- <div *ngFor="let item of dcnds" class="checkbox"> -->
+                           {{dcnds|json}}
+                           asdasdasd
+                        <!-- </div> -->
+                    </div>
+                </div>
+                <div class="center d-flex flex-column bd-highlight">
+                    <button class="btn btn-icon-only btn-primary pt-1 pb-1">
+                        <svg _ngcontent-duh-c27="" class="mat-paginator-icon" focusable="false" viewBox="0 0 24 24">
+                            <path _ngcontent-duh-c27="" d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path>
+                        </svg>
+                    </button>
+                    <button class="btn btn-icon-only mt-2 btn-primary pt-1 pb-1">
+                        <svg class="mat-paginator-icon" focusable="false" viewBox="0 0 24 24">
+                            <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"></path>
+                        </svg>
+                    </button>
+                </div>
+                <div class="right w-role  pb-3">
+                    <form name="searchFormTwo" (ngSubmit)="loadDcndsTwoList()">
+                        <p>Danh sách địa chỉ nhân đạo đã được chọn</p>
+                        <div class="pl-3 pr-3">
+                            <div class="row">
+                                <div class="col-6 kt-margin-b-10">
+                                    <angular2-multiselect [data]="provinceList" name="province" [(ngModel)]="provinceTwo"
+                                        [settings]="provinceTwoSettings" (onSelect)="onItemSelectTwo($event,'province')"
+                                        (onDeSelectAll)="onDeSelectAllTwo('province')"
+                                        onkeydown="return event.key != 'Enter';">
+                                    </angular2-multiselect>
+                                </div>
+                                <div class="col-6 kt-margin-b-10">
+                                    <angular2-multiselect [data]="districtList" name="district" [(ngModel)]="districtTwo"
+                                        [settings]="districtTwoSettings" (onSelect)="onItemSelectTwo($event,'district')"
+                                        (onDeSelectAll)="onDeSelectAllTwo('district')"
+                                        onkeydown="return event.key != 'Enter';">
+                                    </angular2-multiselect>
+                                </div>
+                                <div class="col-6 kt-margin-b-10">
+                                    <angular2-multiselect [data]="wardList" name="ward" [(ngModel)]="wardTwo"
+                                        [settings]="wardTwoSettings" (onSelect)="onItemSelectTwo($event,'ward')"
+                                        (onDeSelectAll)="onDeSelectAllTwo('ward')" onkeydown="return event.key != 'Enter';">
+                                    </angular2-multiselect>
+                                </div>
+                                <div class="col-6 kt-margin-b-10 box-search">
+                                    <input type="text" class="form-control" name="searchInputTwo" [(ngModel)]="searchInputTwo"
+                                        placeholder="{{'BUTTON.SEARCH' | translate}}">
+                                    <button mat-icon-button color="primary" type="submit">
+                                        <i class="fa fa-search"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

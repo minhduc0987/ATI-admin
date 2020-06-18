@@ -1,0 +1,96 @@
+.datepicker-container {
+	// position: relative;
+	display: inline-flex;
+}
+
+.datepicker-icon {
+	right: 0% !important;
+	z-index: 10;
+	// border-left: none;
+}
+
+.datepicker-input {
+	padding-right: 13%;
+}
+
+.dcnd-multiselect .c-btn {
+	font-size: 1rem;
+	font-weight: 400;
+	line-height: 1.5;
+	color: #495057;
+	border-color: #e2e5ec !important;
+	background-color: #fff;
+	transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+}
+
+.list-dcnd {
+
+	.mat-column-stt {
+		justify-content: center;
+		flex: 0 0 5%;
+		padding-left: 13px;
+	}
+
+	.mat-column-userName {
+		flex: 0 0 16%;
+	}
+
+	.mat-column-email {
+		flex: 0 0 18%;
+	}
+
+	.mat-column-phoneNumber {
+		flex: 0 0 10%;
+	}
+
+	.mat-column-phoneNumber {
+		flex: 0 0 13%;
+	}
+
+	.mat-column-permittedFunctions {
+		flex: 0 0 22%;
+	}
+
+	.mat-column-permittedTime {
+		flex: 0 0 15%;
+	}
+
+	.mat-column-action {
+		justify-content: center;
+		flex: 0 0 7%;
+	}
+
+
+
+
+	.c-btn.disabled {
+		background: #f7f8fa !important;
+	}
+
+	.mat-header-row {
+
+		.mat-column-actions,
+		.mat-column-humanityCode,
+		.mat-column-stt {
+			justify-content: center;
+		}
+	}
+
+	.mat-row {
+
+		.mat-column-stt,
+		.mat-column-humanityCode {
+			justify-content: center;
+		}
+	}
+
+	.cuppa-dropdown {
+		.c-btn {
+			padding-right: 40px;
+		}
+	}
+
+	.mat-icon-button {
+		width: 30px;
+	}
+}

@@ -1,0 +1,5 @@
+export enum UserType {
+	ALL = 'USER.USER_TYPE.ALL',
+	ADMIN = 'USER.USER_TYPE.ADMIN',
+	USER = 'USER.USER_TYPE.USER',
+}

@@ -1,0 +1,13 @@
+.kt-mat-snackbar {
+    display: flex;
+    justify-content: space-around;
+}
+.custom-kt-mat-snack {
+    word-wrap: break-word;
+}
+.cdk-overlay-container .cdk-global-overlay-wrapper .cdk-overlay-pane .mat-snack-bar-container{
+    max-width: 70vw !important;
+}
+.list {
+    list-style-type: none;
+}

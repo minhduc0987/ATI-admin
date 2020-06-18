@@ -1,0 +1,79 @@
+<div class="kt-portlet modal-dialog-wrapper edit-user" 
+	[ngClass]="{'kt-portlet--body-progress kt-portlet--body-progress-overlay': viewLoading}" *ngIf="user">
+	<div class="kt-portlet__head kt-portlet__head__custom">
+		<div class="kt-portlet__head-label">
+			<h3 class="kt-portlet__head-title">{{ getTitle() }}</h3>
+		</div>
+		<span class="icon-close-dialog"><mat-icon matTooltip="Close" [mat-dialog-close]>close</mat-icon></span>
+	</div>
+	<form class="kt-form" [formGroup]="userForm" (ngSubmit)="onSubmit()">
+		<div class="kt-portlet__body">
+			<kt-alert *ngIf="hasErrors" type="warn" [duration]="30000" [showCloseButton]="true" (close)="onAlertClose($event)">
+				{{messErr}}
+			</kt-alert>
+			<div class="row">
+				<div class="col-lg-6 kt-margin-bottom-20-mobile form-group">
+					<label>{{ 'AUTH.INPUT.USERNAME' | translate }} <span class="text-danger">*</span></label>
+					<input type="text" class="form-control" formControlName="username" placeholder="{{ 'AUTH.INPUT.USERNAME' | translate }}" [ngClass]="{ 'is-invalid': isControlHasError('username','required') || isControlHasError('username', 'pattern')}" onkeydown="return event.key != 'Enter';"/>
+					<div *ngIf="isControlHasError('username','required')" class="invalid-feedback">
+						{{ 'VALIDATION.REQUIRED_FIELD' | translate }}
+					</div>
+					<div *ngIf="isControlHasError('username','pattern')" class="invalid-feedback">
+						{{ 'VALIDATION.INVALID_FIELD' | translate }}
+					</div>
+				</div>
+				<div class="col-lg-6 kt-margin-bottom-20-mobile form-group">
+					<label>{{ 'AUTH.INPUT.FULLNAME' | translate }} <span class="text-danger">*</span></label>
+					<input type="text" class="form-control" [pattern]="fullname" formControlName="fullname" placeholder="{{ 'AUTH.INPUT.FULLNAME' | translate }}" [ngClass]="{ 'is-invalid': isControlHasError('fullname','required') || isControlHasError('fullname','minlength') || isControlHasError('fullname','maxlength') || isControlHasError('fullname', 'pattern')}" onkeydown="return event.key != 'Enter';"/>
+					<div *ngIf="isControlHasError('fullname','required')" class="invalid-feedback">
+						{{ 'VALIDATION.REQUIRED_FIELD' | translate }}
+					</div>
+					<div *ngIf="isControlHasError('fullname','maxlength')" class="invalid-feedback">
+						{{ 'VALIDATION.INVALID_FIELD' | translate }}
+					</div>
+					<div *ngIf="isControlHasError('fullname','pattern')" class="invalid-feedback">
+						{{ 'VALIDATION.INVALID_FIELD' | translate }}
+					</div>
+				</div>
+				<div class="col-lg-6 kt-margin-bottom-20-mobile form-group">
+					<label>{{ 'AUTH.INPUT.EMAIL' | translate }} <span class="text-danger">*</span></label>
+					<input type="email" class="form-control" formControlName="email" placeholder="{{ 'AUTH.INPUT.EMAIL' | translate }}" [ngClass]="{ 'is-invalid': isControlHasError('email','required') || isControlHasError('email','pattern') }" onkeydown="return event.key != 'Enter';"/>
+					<div *ngIf="isControlHasError('email','required')" class="invalid-feedback">
+						{{ 'VALIDATION.REQUIRED_FIELD' | translate }}
+					</div>
+					<div *ngIf="isControlHasError('email','pattern')" class="invalid-feedback">
+						{{ 'VALIDATION.INVALID_FIELD' | translate }}
+					</div>
+				</div>
+				<div class="col-lg-6 kt-margin-bottom-20-mobile form-group"  *ngIf="isDisable">
+					<label>{{ 'GENERAL.STATUS' | translate }}</label>
+					<mat-radio-group name="status" formControlName="status" class="input-form">
+						<mat-radio-button value="A">{{ 'STATUS_OPTIONS.A' | translate }}</mat-radio-button>
+						<mat-radio-button value="I">{{ 'STATUS_OPTIONS.I' | translate }}</mat-radio-button>
+						</mat-radio-group>
+				</div>
+				<div class="col-lg-12 kt-margin-bottom-20-mobile form-group"  *ngIf="!isDisableRole">
+					<label>{{ 'USERS.SELECTROLE' | translate }}</label>
+					<angular2-multiselect [data]="allRoles" [settings]="settings" formControlName="userRoles" 
+					(onSelect)="onSelect($event)" 
+					(onDeSelectAll)="onDeSelectAll($event)"  onkeydown="return event.key != 'Enter';">
+					</angular2-multiselect>
+				</div>
+			</div>
+		</div>
+		<div class="kt-portlet__foot kt-portlet__no-border kt-portlet__foot--fit">
+			<div class="kt-form__actions kt-form__actions--solid">
+				<div class="row text-right">
+					<div class="col-lg-12">
+						<button type="button" mat-raised-button [mat-dialog-close]="data.animal" cdkFocusInitial>
+							{{ 'BUTTON.CANCEL' | translate }}</button>&nbsp;
+						<button type="submit" mat-raised-button color="primary" [disabled]="isDisableSave">
+							{{ 'BUTTON.SAVE' | translate }}
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</form>
+
+</div>

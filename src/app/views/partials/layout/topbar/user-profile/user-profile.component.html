@@ -1,0 +1,82 @@
+<div ngbDropdown autoClose="true" placement="bottom-right" *ngIf="user$ | async as _user" class="kt-header__topbar-item kt-header__topbar-item--user">
+	<div class="kt-header__topbar-wrapper">
+		<div ngbDropdownToggle class="kt-header__topbar-user" [ngClass]="{'kt-header__topbar-icon': icon}">
+			<span>
+				<span class="kt-header__topbar-welcome" *ngIf="greeting">{{ 'GENERAL.HI' | translate }},</span>
+				<span class="kt-header__topbar-welcome" *ngIf="greeting">{{_user.fullname}}</span>
+			</span>
+			<i *ngIf="icon" class="flaticon2-user-outline-symbol"></i>
+			<img *ngIf="avatar" alt="Pic" onError="this.src='../../../../../../assets/media/pictures/no-avatar.png'" [src]="imgURL">
+			<span *ngIf="badge" class="kt-badge kt-badge--username kt-badge--unified-success kt-badge--lg kt-badge--rounded kt-badge--bold">{{_user.fullname|firstLetter}}</span>
+		</div>
+	</div>
+	<div ngbDropdownMenu class="dropdown-menu dropdown-menu-fit dropdown-menu-right dropdown-menu-anim dropdown-menu-top-unround dropdown-menu-xl">
+		<!--begin: Head -->
+		<div class="kt-user-card kt-user-card--skin-dark kt-notification-item-padding-x" style="background-image: url(./assets/media/misc/bg-1.jpg)">
+			<div class="kt-user-card__avatar">
+				<img alt="Pic" onError="this.src='../../../../../../assets/media/pictures/no-avatar.png'" [src]="imgURL" />
+				<span [hidden]="true" class="kt-badge kt-badge--lg kt-badge--rounded kt-badge--bold kt-font-success">
+					{{_user.fullname}}
+				</span>
+			</div>
+			<div class="kt-user-card__name">
+				{{_user.fullname}}
+			</div>
+		</div>
+		<!--end: Head -->
+
+		<!--begin: Navigation -->
+		<div class="kt-notification">
+			<a ngbDropdownToggle routerLink="/profile" href="javascript:;" class="kt-notification__item">
+				<div class="kt-notification__item-icon">
+					<i class="flaticon2-calendar-3 kt-font-success"></i>
+				</div>
+				<div class="kt-notification__item-details">
+					<div class="kt-notification__item-title kt-font-bold">
+						{{ 'GENERAL.MY_PROFILE' | translate }}
+					</div>
+					<div class="kt-notification__item-time">
+						{{ 'GENERAL.DESC_MY_PROFILE' | translate }}
+					</div>
+				</div>
+			</a>
+			<a ngbDropdownToggle routerLink="/profile/password" href="javascript:;" class="kt-notification__item">
+				<div class="kt-notification__item-icon">
+					<i class="flaticon2-lock kt-font-success"></i>
+				</div>
+				<div class="kt-notification__item-details">
+					<div class="kt-notification__item-title kt-font-bold">
+						{{ 'GENERAL.CHANGE_PASSWORD' | translate }}
+					</div>
+					<div class="kt-notification__item-time">
+						{{ 'GENERAL.DESC_CHANGE_PASSWORD' | translate }}
+					</div>
+				</div>
+			</a>
+			<div class="kt-notification__custom">
+				<a href="javascript:;" (click)="logout()" class="btn btn-outline-brand btn-upper btn-sm btn-bold">{{ 'GENERAL.SIGN_OUT' | translate }}</a>
+			</div>
+		</div>
+		<!--end: Navigation -->
+
+		<!--begin: Navigation(alternative) -->
+		<ul class="kt-nav kt-margin-b-10 kt-hidden">
+			<li class="kt-nav__item">
+				<a routerLink="profile" class="kt-nav__link">
+					<span class="kt-nav__link-icon"><i class="flaticon2-calendar-3"></i></span>
+					<span class="kt-nav__link-text">{{ 'GENERAL.MY_PROFILE' | translate }}</span>
+				</a>
+			</li>
+			<li class="kt-nav__item">
+				<a routerLink="profile" class="kt-nav__link">
+					<span class="kt-nav__link-icon"><i class="flaticon2-gear"></i></span>
+					<span class="kt-nav__link-text">Settings</span>
+				</a>
+			</li>
+			<li class="kt-nav__item kt-nav__item--custom kt-margin-t-15">
+				<a (click)="logout()" class="btn btn-outline-brand btn-upper btn-sm btn-bold">Sign Out</a>
+			</li>
+		</ul>
+		<!--end: Navigation(alternative) -->
+	</div>
+</div>

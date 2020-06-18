@@ -1,0 +1,30 @@
+.list-campaign {
+    .mat-column-actions {
+        flex: 0 0 160px;
+    }
+    .mat-column-statusCode {
+        flex: 0 0 100px;
+    }
+    .mat-column-campaignCode {
+        flex: 0 0 70px;
+    }
+    .mat-column-createdBy {
+        flex: 0 0 150px;
+    }
+    .mat-column-time {
+        flex: 0 0 200px;
+    }
+    .c-btn.disabled {
+        background: #f7f8fa !important;
+    }
+    .mat-header-row {
+        .mat-column-actions, .mat-column-campaignCode, .mat-column-stt, .mat-column-time {
+            justify-content: center;
+        }
+    }
+    .mat-row {
+        .mat-column-stt, .mat-column-campaignCode {
+            justify-content: center;
+        }
+    }
+}

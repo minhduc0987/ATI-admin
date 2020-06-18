@@ -1,0 +1,128 @@
+.custom-img-preview-container {
+	// height: 100px;
+	// max-width: auto;
+	position: relative;
+}
+
+.custom-img-preview {
+	object-fit: cover;
+	display: block;
+	width: 100%;
+	position: absolute;
+	max-height: 80px;
+	transform: translateY(calc(calc((80px - 100%) / 2)));
+}
+
+.img-preview-height {
+	height: 130px;
+}
+
+.img-preview-message {
+	width: 710px;
+	position: absolute;
+	z-index: 1;
+	left: calc(50vw - 355px);
+	-webkit-transition: all .2s ease;
+	-o-transition: all .2s ease;
+	transition: all .2s ease;
+}
+
+.custom-img-preview:hover {
+	// opacity: 0.3;
+	-webkit-transition: all .2s ease-in-out;
+	-o-transition: all .2s ease-in-out;
+	transition: all .2s ease-in-out;
+}
+
+
+
+.img-caption-color {
+	color: white;
+}
+
+.img-preview-mat-checkbox {
+	top: 82px;
+	text-align: center;
+	width: 100%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	// line-height: 25px;
+	-webkit-line-clamp: 3;
+	// height: 75px;
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.mat-simple-snackbar-action {
+	color: rgba(255, 255, 255, 0.7) !important;
+}
+
+
+.img-preview-form-group {
+	height: 114px;
+	padding: 8px;
+	border-radius: 4px;
+}
+
+.img-preview-form-group :hover {
+	border: 10px !important;
+	border-color: blue($color: #be4e4e);
+	// opacity: 0.9;
+}
+
+.img-preview-selected {
+	// background-color: #3f51b5;
+	background-color: steelblue !important;
+	-webkit-transition: all .2s ease-in-out;
+	-o-transition: all .2s ease-in-out;
+	transition: all .2s ease-in-out;
+}
+
+.img-object-fit {
+	object-fit: cover;
+	display: block;
+	margin: auto;
+}
+
+.no-border {
+	border: none;
+}
+
+.no-padding {
+	padding: 0 !important;
+
+}
+
+.position-absolute {
+	position: absolute;
+}
+
+.position-relative {
+	position: relative;
+}
+
+.position-fixed {
+	position: fixed;
+}
+
+.img-preview-kt-form {
+	max-height: 80vh !important;
+	padding-right: 0px;
+	background-color: #f7f8fa;
+}
+
+.img-preview-kt-portlet {
+	height: 580px;
+	position: relative;
+}
+
+.img-preview-container {
+	min-height: calc(80vh - 120px);
+	max-height: calc(80vh - 120px);
+
+	height: calc(80vh - 120px);
+	overflow-x: hidden;
+	overflow-y: hidden;
+}

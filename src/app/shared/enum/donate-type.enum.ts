@@ -1,0 +1,5 @@
+export enum DonateType {
+	ALL = 'DONATES.DONATE_TYPE.ALL',
+	C = 'DONATES.DONATE_TYPE.C',
+	H = 'DONATES.DONATE_TYPE.H',
+}

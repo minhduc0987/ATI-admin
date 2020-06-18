@@ -1,0 +1,18 @@
+.edit-user {
+    .kt-mat-dialog-container__wrapper .mat-dialog-container {
+        overflow: unset !important;
+    }
+    .lazyContainer {
+        position: relative;
+    }
+    .list-area {
+        max-height: 230px;
+        overflow: hidden;
+    }
+    .list-filter.ng-star-inserted ~ div {
+        margin-bottom: 3px;
+    }
+    .c-btn {
+        height: unset;
+    }
+}

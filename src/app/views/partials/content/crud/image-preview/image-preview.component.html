@@ -1,0 +1,86 @@
+<div class="kt-portlet mat-custom">
+	<div class="kt-portlet__head kt-portlet__head__custom">
+		<div class="kt-portlet__head-progress">
+		</div>
+		<div class="kt-portlet__head-label">
+			<h3 class="kt-portlet__head-title">{{ 'BUTTON.SELECT' | translate }}&nbsp;{{ 'DOCUMENT_TYPE.PICTURE' | translate }}</h3>
+			<span class="kt-portlet__head-icon kt-hide">
+				<i class="la la-gear"></i>
+			</span>
+		</div>
+		<div class="kt-portlet__head-label">
+			<ng-container ktPortletTools>
+				<button href="javascript:;" matTooltip="{{ 'BUTTON.DELETE_UPLOAD' | translate }}" *ngIf="!data.isGalleryDisable" [disabled]="selected === 'none'" (click)="removeSelected()" class="btn btn-default kt-margin-r-10" mat-raised-button>
+					<i class="flaticon-upload"></i>
+					<span class="kt-hidden-mobile">{{ 'BUTTON.DELETE_UPLOAD' | translate }}</span>
+				</button>
+				<button href="javascript:;" matTooltip="{{ 'BUTTON.UPLOAD' | translate }}" *ngIf="!data.isGalleryDisable" [disabled]="isUploaded" (click)="uploadfile.click()" class="btn btn-default kt-margin-r-10" mat-raised-button>
+					<i class="flaticon-upload"></i>
+					<span class="kt-hidden-mobile">{{ 'BUTTON.UPLOAD' | translate }}</span>
+				</button>
+
+
+				<input [disabled]="isUploaded" #uploadfile type="file" multiple hidden [accept]="data.accept" (input)="uploadFile($event)" />
+				<button href="javascript:;" (click)="onYesClick()" matTooltip="Close" class="btn btn-default kt-margin-r-10" mat-raised-button>
+					<i class="fa fa-check"></i>
+					<span class="kt-hidden-mobile">{{ 'BUTTON.SAVE' | translate }}</span>
+				</button>
+			</ng-container>
+		</div>
+	</div>
+	<div class="kt-form ">
+		<div class="kt-portlet__body img-preview-kt-form">
+			<div class="row">
+				<div class="col-3 img-preview-container">
+					<div hidden class="kt-separator kt-separator--dashed"></div>
+					<kt-portlet>
+						<kt-portlet-body class="no-padding">
+							<ul class="list-group no-border" id="list-tab" role="tablist" style="border:none;">
+								<li (click)="chooseSelect(true)" [ngClass]="{ active: selected === 'all' }" class="list-group-item list-group-item-action no-border" id="list-home-list">
+									{{ 'DROPDOWN.SELECT_ALL' | translate }}
+								</li>
+								<li (click)="chooseSelect(false)" [ngClass]="{ active: selected === 'none' }" class="list-group-item list-group-item-action no-border" id="list-profile-list">
+									{{ 'DROPDOWN.UNSELECT_ALL' | translate }}
+								</li>
+							</ul>
+						</kt-portlet-body>
+					</kt-portlet>
+				</div>
+				<div class="col-9 img-preview-container">
+					<mat-progress-bar mode="indeterminate" *ngIf="viewLoading"></mat-progress-bar>
+					<kt-portlet>
+						<kt-portlet-body style="height: 80vh;">
+							<!-- {{picsArray.value | json}} -->
+							<form [formGroup]="formGroup">
+								<div class="container-fluid">
+									<div class="row" formControlArray="picsArray">
+										<div class="col-sm-12 col-md-3 col-xl-2 img-preview-height" *ngFor="let pic of picsArray.value; let i = index">
+											<a href="javascript:;" (click)="fileSelected(i)">
+												<div class="form-group img-preview-form-group" [ngClass]="{'img-preview-selected': pic.value}">
+													<!-- [ngClass]="{'img-preview-selected': formGroup.controls[pic.fileId].value}" -->
+													<div class="custom-img-preview-container" [matTooltip]="pic.fileNameUpload ? pic.fileNameUpload: 'No Name'">
+														<div style="color: black;" class="position-absolute img-preview-mat-checkbox">
+															<a [ngClass]="{'img-caption-color': pic.value}" target="_blank" [href]="pic.pathFileServer"> {{
+																pic.fileNameUpload ? pic.fileNameUpload.length > 12
+																? (pic.fileNameUpload | slice: 0:7) +
+																  '...' +
+																  (pic.fileNameUpload | slice: pic.fileNameUpload.length - 5:pic.fileNameUpload.length)
+																: pic.fileNameUpload : 'No Name'
+															}} </a>
+														</div>
+														<mat-checkbox #check [value]="pic.value" hidden></mat-checkbox>
+														<img [src]="pic.pathFileServer" class="img-responsive custom-img-preview" onError="this.src='../../../../../../assets/media/pictures/1280px-No_image_3x4.svg.png'" alt="">
+													</div>
+												</div>
+											</a>
+										</div>
+									</div>
+								</div>
+							</form>
+						</kt-portlet-body>
+					</kt-portlet>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

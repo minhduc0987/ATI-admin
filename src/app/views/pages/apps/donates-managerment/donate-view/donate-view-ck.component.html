@@ -1,0 +1,78 @@
+<kt-portlet class="view-donate">
+	<!-- <kt-portlet-header [title]="'Thông tin kế hoạch tài trợ'" [class]="'kt-portlet__head--lg'">
+    </kt-portlet-header>
+    <div class="row button-donate">
+        <a [routerLink]="['/donates-managerment/list']" class="btn btn-secondary kt-margin-r-10" mat-raised-button>
+            <i class="la la-arrow-left"></i>
+            <span class="kt-hidden-mobile">{{ 'BUTTON.BACK' | translate }}</span>
+        </a>
+        <div>
+            <button type="button" *ngIf="approve" (click)="approveDonate()" mat-raised-button color="primary">{{ 'BUTTON.SAVE_APPROVE' | translate }}</button>
+            <button type="button" *ngIf="reject" (click)="rejectDonate()" mat-raised-button color="primary">{{ 'ACTION.REFUSE' | translate }}</button>
+            <button type="button" *ngIf="spam" (click)="spamDonate()" mat-raised-button color="primary">{{ 'ACTION.SPAM' | translate }}</button>
+        </div>
+    </div> -->
+    <kt-portlet-header [title]="'Thông tin kế hoạch tài trợ'" class="button-donate" [class]="'kt-portlet__head--lg'">
+			<ng-container ktPortletTools id="dcndButton">
+				<button [routerLink]="['/donates-managerment/list']" class="btn btn-secondary kt-margin-r-10" mat-raised-button>
+					<i class="la la-arrow-left"></i>
+					<span class="kt-hidden-mobile">{{ 'BUTTON.BACK' | translate }}</span>
+				</button>
+                <button type="button" class="kt-margin-r-10" *ngIf="approve" (click)="approveDonate()" mat-raised-button color="primary">{{ 'BUTTON.SAVE_APPROVE' | translate }}</button>
+                <button type="button" class="kt-margin-r-10" *ngIf="reject" (click)="rejectDonate()" mat-raised-button color="primary">{{ 'ACTION.REFUSE' | translate }}</button>
+                <button type="button" class="kt-margin-r-10" *ngIf="spam" (click)="spamDonate()" mat-raised-button color="primary">{{ 'ACTION.SPAM' | translate }}</button>
+			</ng-container>
+		</kt-portlet-header>
+    <kt-portlet-body *ngIf="donateForm">
+        <form [formGroup]="donateForm">
+            <div class="row">
+                <div class="col-md-12 kt-margin-b-20 form-group">
+                    <label><b>{{ title }}: </b> {{ content }}</label>
+                    
+                </div>
+                <div class="col-md-12 kt-margin-b-20 form-group">
+                    <span><b>{{ 'DONATES.FROM_OF_SUPPORT' | translate }}</b></span> 
+                    <mat-checkbox color="primakey" class="kt-margin-l-10" disabled checked="true" >{{ 'DONATES.TRANSFER' | translate }}</mat-checkbox>
+                    <mat-checkbox color="primakey" class="kt-margin-l-10" disabled >{{ 'DONATES.SELF_SHIPPING' | translate }}</mat-checkbox>
+                    <mat-checkbox color="primakey" class="kt-margin-l-10" disabled >{{ 'DONATES.VN_POST' | translate }}</mat-checkbox>
+                </div>
+                <div class="col-md-12 kt-margin-b-20 form-group">
+                    <label><b>{{ 'DONATES.INFO_DETAIL' | translate }}</b> </label>
+                    <div class="row kt-margin-bottom-20 form-group">
+                        <div class="col-md-4">
+                            <input type="text" class="form-control" formControlName="fund_name" placeholder="{{ 'DONATES.INPUT_NAME' | translate }}" onkeydown="return event.key != 'Enter';"/>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="text" class="form-control" formControlName="fund_phone" placeholder="{{ 'DONATES.INPUT_PHONE' | translate }}" onkeydown="return event.key != 'Enter';"/>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="text" class="form-control" formControlName="fund_email" placeholder="{{ 'DONATES.INPUT_EMAIL' | translate }}" onkeydown="return event.key != 'Enter';"/>
+                        </div>
+                    </div>
+                    <mat-checkbox color="primakey" class="kt-margin-l-10" formControlName="view_humanity" >{{ 'DONATES.SHOW_HOME' | translate }}</mat-checkbox>
+                </div>
+                <div class="col-md-4 kt-margin-b-20 form-group">
+                    <label><b>{{ 'DONATES.FUND_PRICE' | translate }}</b></label>
+                    <div class="box-money">
+                        <input type="text" class="form-control" formControlName="fund_price" placeholder="{{ 'DONATES.INPUT_FUND_PRICE' | translate }}" onkeydown="return event.key != 'Enter';"/>
+                        <div class="money">VNĐ</div>
+                    </div>
+                </div>
+                <div class="col-md-8 kt-margin-b-20 form-group">
+                    <label><b>{{ 'DONATES.WISHES' | translate }}</b></label>
+                    <input type="text" class="form-control" formControlName="wishes" placeholder="{{ 'DONATES.INPUT_WISHES' | translate }}" onkeydown="return event.key != 'Enter';"/>
+                </div>
+                <div class="col-md-4 kt-margin-b-20 form-group">
+                    <label><b>{{ 'DONATES.FUND_ACTUAL_PRICE' | translate }}</b></label>
+                    <div class="box-money">
+                        <input type="text" class="form-control" (keyup)="onChangeCurrency()" onkeypress='return event.charCode >= 48 && event.charCode <= 57' formControlName="fund_actual_price" [ngClass]="{ 'is-invalid': invalid }" placeholder="{{ 'DONATES.INPUT_FUND_ACTUAL_PRICE' | translate }}" onkeydown="return event.key != 'Enter';" onkeydown="return event.keyCode !== 69"/>
+                        <div class="money" [ngClass]="{ 'is-invalid': invalid }">VNĐ</div>
+                        <div *ngIf="invalid" class="invalid-feedback">
+                            {{ 'VALIDATION.INVALID_FIELD' | translate }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </kt-portlet-body>
+</kt-portlet>

@@ -1,0 +1,43 @@
+<div class="kt-portlet modal-dialog-wrapper custom-input">
+	<div class="kt-portlet__head kt-portlet__head__custom">
+		<div class="kt-portlet__head-progress">
+			<!-- here can place a progress bar-->
+			<mat-progress-bar mode="indeterminate" *ngIf="viewLoading"></mat-progress-bar>
+		</div>
+		<div class="kt-portlet__head-label">
+			<h3 class="kt-portlet__head-title">{{ data.title }}</h3>
+			<span class="kt-portlet__head-icon kt-hide">
+				<i class="la la-gear"></i>
+			</span>
+		</div>
+		<span class="icon-close-dialog"><mat-icon matTooltip="Close" [mat-dialog-close]>close</mat-icon></span>
+	</div>
+	<form [formGroup]="inputForm" (ngSubmit)="onSubmit()">
+		<div class="kt-form">
+			<div class="kt-portlet__body">
+				<div class="form-group kt-form__group row">
+					<div class="col-lg-12">
+						{{ data.description }}
+					</div>
+				</div>
+				<div class="form-group kt-form__group" *ngIf="hasErrors">
+					<kt-alert type="warn" [duration]="30000" [showCloseButton]="true" (close)="onAlertClose($event)">
+						{{ 'MESSAGE.ERROR_TEXT_RESON' | translate }}
+					</kt-alert>
+				</div>
+				<div class="form-group kt-form__group row">
+					<div class="col-lg-12">
+						<label>{{ 'MESSAGE.TEXT_RESON' | translate }}</label>
+						<textarea class="form-control" cols="4" formControlName="textRefuse"> </textarea>
+					</div>
+				</div>
+			</div>
+			<div class="kt-portlet__foot kt-portlet__no-border kt-portlet__foot--fit text-right">
+				<div class="kt-form__actions kt-form__actions--sm">
+					<button mat-button type="button" (click)="onNoClick()">{{ data.buttonLeft }}</button>&nbsp;
+					<button mat-button type="submit" color="primary" cdkFocusInitial>{{ data.buttonRight }}</button>
+				</div>
+			</div>
+		</div>
+	</form>
+</div>

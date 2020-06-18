@@ -1,0 +1,94 @@
+<div class="kt-portlet roles" [ngClass]="{ 'kt-portlet--body-progress' : viewLoading, 'kt-portlet--body-progress-overlay' : loadingAfterSubmit }">
+    <div class="kt-portlet__head kt-portlet__head__custom" *ngIf="role">
+        <div class="kt-portlet__head-label">
+            <h3 class="kt-portlet__head-title">{{getTitle()}}</h3>
+        </div>
+    </div>
+    <div *ngIf="role">
+        <div class="kt-form">
+            <div class="kt-portlet__body">
+
+                <div class="kt-portlet__body-progress">
+                    <mat-spinner [diameter]="20"></mat-spinner>
+                </div>
+                <kt-alert *ngIf="hasFormErrors" type="warn" [duration]="30000" [showCloseButton]="true" (close)="onAlertClose($event)">
+                   {{messageErr}}
+                </kt-alert>
+
+                <form class="row" [formGroup]="editForm" autocomplete="off">
+                    <div class="col-md-12">
+                       <div class="form-group mb-3">
+                           <label for="">{{'ROLE.NAME_FIELD' | translate}} <span class="text-danger">*</span></label>
+                           <input type="text" class="form-control" ktAppTrimOnBlur placeholder="{{'ROLE.NAME_FIELD' | translate}}" [disabled]="role.isCoreRole" name="title" formControlName="title" [ngClass]="{ 'is-invalid': isControlHasError('title','required') || isControlHasError('title','maxlength') }">
+                           <div *ngIf="isControlHasError('title','required')" class="invalid-feedback">
+                            {{ 'VALIDATION.REQUIRED_FIELD' | translate }}
+                            </div>
+                            <div *ngIf="isControlHasError('title','maxlength')" class="invalid-feedback">
+                                {{ 'VALIDATION.MAX_LENGTH_FIELD' | translate }} 50
+                            </div>
+                       </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="form-group mb-3">
+                            <label for="" >{{'ROLE.DESCRIPTION' | translate}}</label>
+                            <textarea name="roleDescription" ktAppTrimOnBlur placeholder="{{'ROLE.DESCRIPTION' | translate}}" id="" class="form-control" rows="2" formControlName="roleDescription" [ngClass]="{ 'is-invalid': isControlHasError('roleDescription','maxlength') }"></textarea>
+                            <div *ngIf="isControlHasError('roleDescription','maxlength')" class="invalid-feedback">
+                                    {{ 'VALIDATION.MAX_LENGTH_FIELD' | translate }} 200
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <div class="kt-separator kt-separator--dashed"></div>
+                <h6 class="kt-section__heading">
+                    {{'ROLE.PERMISSION' | translate}}:
+                </h6>
+                <div class="form-group kt-form__group row">
+                    <div class="col-lg-12 kt-margin-bottom-20-mobile">
+                        <div class="kt-timeline-3 mb-5">
+                            <div class="kt-timeline-3__items kt-timeline-3__items--rolePermissions">
+                                <div *ngFor="let _rootRole of rolePermissions; let i = index" class="kt-timeline-3__inner">
+                                    
+                                    <!-- {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}} -->
+                                    <!-- <button mat-icon-button>
+                                        <mat-icon class="mat-icon-rtl-mirror">expand_more</mat-icon>
+                                    </button> -->
+                                    <div class="kt-timeline-3__item kt-border-bottom-grey kt-py-15 kt-bg-grey">
+                                        <span class="kt-timeline-3__item-time">
+                                            <mat-checkbox [(ngModel)]="_rootRole.isSelected"
+                                                (change)="isSelectedChanged($event, i)"
+                                                [disabled]="role.isCoreRole">{{ _rootRole.functionName }}</mat-checkbox> 
+                                        </span>
+                                    </div>
+                                    <div class="kt-border-bottom-grey kt-bg-grey box-roles">
+                                        <div class="kt-timeline-3__item kt-timeline-3__item-child pad15"
+                                            *ngFor="let _childRole of _rootRole.services; let j = index">
+                                            <span class="kt-timeline-3__item-time">
+                                                <mat-checkbox [(ngModel)]="_childRole.isSelected"
+                                                    (change)="isSelectedChangedService($event, i)"
+                                                    [disabled]="role.isCoreRole">{{ _childRole.serviceName }}</mat-checkbox>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="kt-portlet__foot kt-portlet__foot--fit kt-portlet__no-border">
+                <div class="kt-form__actions kt-form__actions--solid">
+                    <div class="row text-right">
+                        <div class="col-lg-12">
+                            <button type="button" mat-raised-button [mat-dialog-close]="data.animal" cdkFocusInitial matTooltip="Đóng">
+                                {{'BUTTON.CANCEL' | translate}}
+                            </button>&nbsp;
+                            <button type="button" [disabled]=" role.isCoreRole || isDisable" mat-raised-button color="primary" (click)="onSubmit()"  matTooltip="Lưu thay đổi">
+                                {{'BUTTON.SAVE' | translate}}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

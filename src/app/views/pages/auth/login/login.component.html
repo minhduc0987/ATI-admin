@@ -1,0 +1,89 @@
+<!--begin::Body-->
+<div class="kt-login__body">
+	<!--begin::Signin-->
+	<div class="kt-login__form">
+		<div class="kt-login__title">
+			<h3>Đăng nhập</h3>
+		</div>
+
+		<!-- <kt-auth-notice></kt-auth-notice> -->
+
+		<kt-auth-alert *ngIf="hasErrors" type="warn" [showCloseButton]="true" (close)="onAlertClose($event)">
+			{{messErr}}
+		</kt-auth-alert>
+
+		<!--begin::Form-->
+		<form [formGroup]="loginForm" autocomplete="off">			
+			<div class="form-group">
+				<label>{{ 'AUTH.INPUT.USERNAME' | translate }} <span class="text-danger">*</span></label>
+				<input type="text" class="form-control" formControlName="username" autocomplete="off" [ngClass]="{ 'is-invalid': isControlHasError('username','required') || isControlHasError('username','minlength') || isControlHasError('username','maxlength') }">
+				<div *ngIf="isControlHasError('username','required')" class="invalid-feedback">
+					{{ 'VALIDATION.REQUIRED_FIELD' | translate }}
+				</div>
+				<div *ngIf="isControlHasError('username','minlength')" class="invalid-feedback">
+					{{ 'VALIDATION.MIN_LENGTH_FIELD' | translate }} 3
+				</div>
+				<div *ngIf="isControlHasError('username','maxlength')" class="invalid-feedback">
+					{{ 'VALIDATION.MAX_LENGTH_FIELD' | translate }} 320
+				</div>
+			</div>
+			<div class="form-group">
+				<label>{{ 'AUTH.INPUT.PASSWORD' | translate }} <span class="text-danger">*</span></label>
+				<input type="password" class="form-control" formControlName="password" autocomplete="off"
+					[ngClass]="{ 'is-invalid': isControlHasError('password','required') || isControlHasError('password','minlength') || isControlHasError('password','maxlength') }">
+				<div *ngIf="isControlHasError('password','required')" class="invalid-feedback">
+					{{ 'VALIDATION.REQUIRED_FIELD' | translate }}
+				</div>
+				<div *ngIf="isControlHasError('password','minlength')" class="invalid-feedback">
+					{{ 'VALIDATION.MIN_LENGTH_FIELD' | translate }} 3
+				</div>
+				<div *ngIf="isControlHasError('password','maxlength')" class="invalid-feedback">
+					{{ 'VALIDATION.MAX_LENGTH_FIELD' | translate }} 100
+				</div>
+			</div>
+			<!--begin::Action-->
+			<div class="kt-login__actions">
+				<a href="javascript:;" (mousedown)="goToForgot()" class="kt-link kt-login__link-forgot">
+					{{ 'AUTH.GENERAL.FORGOT_BUTTON' | translate }}
+				</a>
+				<button (click)="submit()"
+					[ngClass]="{'kt-spinner kt-spinner--right kt-spinner--md kt-spinner--light': loading}"
+					id="kt_login_signin_submit"
+					class="btn btn-primary btn-elevate kt-login__btn-primary">{{ 'AUTH.LOGIN.BUTTON' | translate }}</button>
+			</div>
+			<!--end::Action-->
+		</form>
+		<!--end::Form-->
+
+		<!--begin::Divider-->
+		<div class="kt-login__divider d-none">
+			<div class="kt-divider">
+				<span></span>
+				<span>HOẶC</span>
+				<span></span>
+			</div>
+		</div>
+		<!--end::Divider-->
+
+		<!--begin::Options-->
+		<div class="kt-login__options d-none">
+			<a href="https://www.facebook.com/" target="_blank" class="btn btn-primary kt-btn">
+				<i class="fab fa-facebook-f"></i>
+				Facebook
+			</a>
+
+			<a href="https://twitter.com/" target="_blank" class="btn btn-info kt-btn">
+				<i class="fab fa-twitter"></i>
+				Twitter
+			</a>
+
+			<a href="https://google.com/" class="btn btn-danger kt-btn">
+				<i class="fab fa-google"></i>
+				Google
+			</a>
+		</div>
+		<!--end::Options-->
+	</div>
+	<!--end::Signin-->
+</div>
+<!--end::Body-->

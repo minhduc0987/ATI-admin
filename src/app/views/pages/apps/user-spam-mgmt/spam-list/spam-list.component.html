@@ -1,0 +1,187 @@
+<kt-portlet class="list-dcnd">
+	<kt-portlet-header [title]="spamTitle"> </kt-portlet-header>
+	<kt-portlet-body>
+		<!-- start::FILTERS & GROUP ACTIONS -->
+		<div class="kt-form">
+			<!-- start::FILTERS -->
+			<!-- <div class="kt-form__filtration"> -->
+			<!-- {{ userSpamForm.value | json }} -->
+			<form class="row align-items-center" [formGroup]="userSpamForm" (ngSubmit)="search()">
+				<div class="col-md-2 kt-margin-bottom-10-mobile">
+					<div class="form-group">
+						<label>{{ 'USER.LOCK.START_TIME' | translate }}</label>
+						<div class="input-group datepicker-container position-relative">
+							<input
+								[matDatepicker]="picker"
+								[max]="userSpamForm.value.endTime ? userSpamForm.value.endTime : maxDate"
+								formControlName="startTime"
+								readonly
+								class="form-control datepicker-input"
+							/>
+							<mat-datepicker-toggle #datepicker class="datepicker-icon position-absolute" matSuffix [for]="picker">
+							</mat-datepicker-toggle>
+							<!-- <div *ngIf="isControlHasError('dob','required')" class="invalid-feedback">
+								{{ 'VALIDATION.REQUIRED_FIELD' | translate }}
+							</div>
+							<div *ngIf="isControlHasError('','dateNotValid')" class="invalid-feedback">
+								{{ 'VALIDATION.DATE_NOT_VALID' | translate }}
+							</div> -->
+						</div>
+						<mat-datepicker #picker (opened)="clearDate('startTime')"></mat-datepicker>
+					</div>
+				</div>
+				<div class="col-md-2 kt-margin-bottom-10-mobile">
+					<div class="form-group">
+						<label>{{ 'USER.LOCK.END_TIME' | translate }}</label>
+						<div class="input-group datepicker-container position-relative">
+							<input
+								[matDatepicker]="picker2"
+								[min]="userSpamForm.value.startTime ? userSpamForm.value.startTime : null"
+								[max]="maxDate"
+								formControlName="endTime"
+								readonly
+								class="form-control datepicker-input"
+							/>
+							<mat-datepicker-toggle #datepicker class="datepicker-icon position-absolute" matSuffix [for]="picker2">
+							</mat-datepicker-toggle>
+							<!-- <div *ngIf="isControlHasError('dob','required')" class="invalid-feedback">
+								{{ 'VALIDATION.REQUIRED_FIELD' | translate }}
+							</div>
+							<div *ngIf="isControlHasError('','dateNotValid')" class="invalid-feedback">
+								{{ 'VALIDATION.DATE_NOT_VALID' | translate }}
+							</div> -->
+						</div>
+						<mat-datepicker #picker2 (opened)="clearDate('endTime')"></mat-datepicker>
+					</div>
+				</div>
+
+				<div class="col-md-2 kt-margin-bottom-10-mobile form-group">
+					<label>{{ 'USER.LOCK.TYPE.TITLE' | translate }}</label>
+					<angular2-multiselect
+						class="dcnd-multiselect"
+						[data]="userSpamTypeList"
+						[settings]="userSpamTypeSettings"
+						class="delete"
+						name="userType"
+						formControlName="userType"
+						(onDeSelectAll)="clearDate('userType')"
+					>
+					</angular2-multiselect>
+				</div>
+				<div class="col-md-2 kt-margin-bottom-10-mobile form-group">
+					<label>{{ 'BUTTON.SEARCH' | translate }}</label>
+					<input
+						type="text"
+						class="form-control"
+						formControlName="searchInput"
+						placeholder="{{ 'BUTTON.SEARCH' | translate }}"
+						autocomplete="off"
+					/>
+				</div>
+				<div class="col-md-2 kt-margin-bottom-10-mobile">
+					<button type="submit" mat-raised-button color="primary">
+						<span>{{ 'BUTTON.SEARCH' | translate }}</span>
+					</button>
+				</div>
+			</form>
+		</div>
+		<!-- end::FILTERS & GROUP ACTIONS -->
+
+		<!-- MATERIAL TABLE | Binded to datasources -->
+		<!-- See off.documentations 'https://material.angular.io/components/table/overview' -->
+		<div class="row">
+			<div class="mat-table__wrapper">
+				<mat-table
+					class="lmat-elevation-z8"
+					#table
+					[dataSource]="dataSource"
+					matSort
+					#sort1="matSort"
+					matSortActive="userId"
+					matSortDirection="asc"
+					matSortDisableClear
+				>
+					<!-- Checkbox Column -->
+
+					<!-- Table with selection -->
+					<!-- https://run.stackblitz.com/api/angular/v1?file=app%2Ftable-selection-example.ts -->
+					<ng-container matColumnDef="stt" class="id-cell">
+						<!-- ATTRIBUTE   for sorting | https://material.angular.io/components/sort/overview -->
+						<mat-header-cell *matHeaderCellDef>#</mat-header-cell>
+						<mat-cell *matCellDef="let userSpam; let i = index">{{ i + 1 + paginator.pageIndex * paginator.pageSize }}</mat-cell>
+					</ng-container>
+					<ng-container matColumnDef="userName">
+						<mat-header-cell *matHeaderCellDef>{{ 'AUTH.INPUT.FULLNAME' | translate }}</mat-header-cell>
+						<mat-cell *matCellDef="let userSpam">{{ userSpam.fullname }}</mat-cell>
+					</ng-container>
+					<ng-container matColumnDef="email">
+						<mat-header-cell *matHeaderCellDef>{{ 'AUTH.INPUT.EMAIL' | translate }}</mat-header-cell>
+						<mat-cell *matCellDef="let userSpam">{{ userSpam.email }}</mat-cell>
+					</ng-container>
+					<ng-container matColumnDef="phoneNumber">
+						<mat-header-cell *matHeaderCellDef>{{ 'USER.INFO.PHONE_NUMBER' | translate }}</mat-header-cell>
+						<mat-cell *matCellDef="let userSpam">
+							<span class="text-over">{{ userSpam.phone }}</span>
+						</mat-cell>
+					</ng-container>
+					<ng-container matColumnDef="permittedFunctions">
+						<mat-header-cell *matHeaderCellDef>{{ 'USER.LOCK.LOCK_TYPE' | translate }}</mat-header-cell>
+						<mat-cell *matCellDef="let userSpam">
+							<span class="text-over">{{ 'USER.LOCK.TYPE.' + userSpam.lockType | translate }}</span>
+						</mat-cell>
+					</ng-container>
+					<ng-container matColumnDef="permittedTime">
+						<mat-header-cell *matHeaderCellDef>{{ 'USER.LOCK.LOCK_TIME' | translate }}</mat-header-cell>
+						<mat-cell *matCellDef="let userSpam">
+							<span class="text-over">{{ userSpam.time | date: 'dd/MM/yyyy HH:mm:ss' }}</span>
+						</mat-cell>
+					</ng-container>
+					<ng-container matColumnDef="action">
+						<mat-header-cell *matHeaderCellDef>{{ 'GENERAL.ACTIONS' | translate }}</mat-header-cell>
+						<mat-cell *matCellDef="let userSpam" class="text-center">
+							<!-- <button (click)="resetPassword(user.userId)" mat-icon-button color="primary" matTooltip="{{'USERS.RESETPASS' | translate}}">
+									<mat-icon>
+											<i class="la la-cog"></i>
+									</mat-icon>
+								</button>&nbsp; -->
+							<button
+								ktHasPermissions
+								[functionCode]="'ACCOUNT_LOCK'"
+								[serviceCode]="'ACCOUNT_LOCK_MODIFY'"
+								(click)="unlockUser(userSpam)"
+								mat-icon-button
+								color="primary"
+								matTooltip="{{ 'ACTION.EDIT' | translate }}"
+							>
+								<mat-icon>lock_open</mat-icon>
+							</button>
+						</mat-cell>
+					</ng-container>
+					<mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+					<mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+				</mat-table>
+				<div class="mat-table__message" *ngIf="!hasItem && !(dataSource.isPreloadTextViewed$ | async)">
+					{{ 'TABLE.NODATA' | translate }}
+				</div>
+				<!-- Message for empty data  -->
+				<div class="mat-table__message" *ngIf="dataSource.isPreloadTextViewed$ | async">{{ 'TABLE.WAIT' | translate }}</div>
+			</div>
+		</div>
+
+		<!-- start: BOTTOM -->
+		<div class="mat-table__bottom">
+			<!-- MATERIAL SPINNER | Url: 'https://material.angular.io/components/progress-spinner/overview' -->
+			<mat-spinner [diameter]="20" *ngIf="dataSource.loading$ | async"></mat-spinner>
+			<!-- MATERIAL PAGINATOR | Binded to dasources -->
+			<!-- See off.documentations 'https://material.angular.io/components/paginator/overview' -->
+			<mat-paginator
+				[pageSize]="10"
+				[pageSizeOptions]="[5, 10, 15]"
+				(page)="pageEvent($event)"
+				[length]="dataSource.paginatorTotal$ | async"
+				[showFirstLastButtons]="true"
+			></mat-paginator>
+		</div>
+		<!-- end: BOTTOM -->
+	</kt-portlet-body>
+</kt-portlet>

@@ -1,0 +1,105 @@
+<kt-portlet>
+	<!-- PORTLET LOADING | Binded to TABLE Datasource -->
+	<!-- See prop => '~/core/_crud/models/data-sources/_base.datasource.ts' (loading$) -->
+	<kt-portlet-header [title]="'Phân quyền'" [class]="'kt-portlet__head--lg'" [viewLoading$]="dataSource.loading$">
+
+		<ng-container ktPortletTools>
+			<button ktHasPermissions [functionCode]="'ROLE'" [serviceCode]="'ROLE_CREATE'" (click)="addRole()" mat-raised-button matTooltip="Thêm mới" color="primary" type="button">
+				<span>{{'BUTTON.ADD' | translate}}</span>
+			</button>
+			<!-- Buttons (Material Angular) | See off.documenations 'https://material.angular.io/components/button/overview' -->
+			<!-- mat-raised-button | Rectangular contained button w/ elevation  -->
+		</ng-container>
+	</kt-portlet-header>
+	<!-- end::Header -->
+
+	<kt-portlet-body>
+		<!-- start::FILTERS & GROUP ACTIONS -->
+		<div class="kt-form kt-margin-b-30">
+			<!-- start::FILTERS -->
+			<div class="kt-form__filtration">
+				<form class="row align-items-center" name="formSearch" (ngSubmit)="onSearch()">
+					<div class="col-md-3 kt-margin-bottom-10-mobile form-group">
+						<label for="">{{'ROLE.NAME_FIELD' | translate}}</label>
+						<input type="text" class="form-control" placeholder="Nhập tên quyền" name="searchInput"
+							[(ngModel)]="searchInput">
+					</div>
+					<div class="col-md-2">
+						<button mat-raised-button color="primary" type="submit">
+							<span>{{'BUTTON.SEARCH' | translate}}</span>
+						</button>
+					</div>
+				</form>
+			</div>
+			<!-- end::FILTERS -->
+		</div>
+
+		<!-- end::FILTERS & GROUP ACTIONS -->
+
+		<!-- MATERIAL TABLE | Binded to datasources -->
+		<!-- See off.documentations 'https://material.angular.io/components/table/overview' -->
+		<div class="mat-table__wrapper">
+			<mat-table class="lmat-elevation-z8" #table [dataSource]="dataSource"	>
+				<!-- Checkbox Column -->
+
+
+				<ng-container matColumnDef="roleId">
+					<!-- ATTRIBUTE mat-sort-header  for sorting | https://material.angular.io/components/sort/overview -->
+					<mat-header-cell *matHeaderCellDef  class="mat-column-id">{{'TABLE.NO' | translate}}</mat-header-cell>
+					<mat-cell *matCellDef="let role; let i = index" class="mat-column-id">{{paginator.pageIndex*paginator.pageSize + i + 1 }}</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="roleName">
+					<mat-header-cell *matHeaderCellDef style="flex: 0 0 30%; word-break: break-word;">{{'ROLE.NAME_FIELD' | translate}}</mat-header-cell>
+					<mat-cell style="flex: 0 0 30%; word-break: break-word;" *matCellDef="let role">{{role.roleName}}</mat-cell>
+				</ng-container>
+
+				
+				<ng-container matColumnDef="description">
+						<mat-header-cell *matHeaderCellDef >{{'ROLE.DESCRIPTION' | translate}}</mat-header-cell>
+						<mat-cell *matCellDef="let role">{{role.roleDescription}}</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="actions">
+					<mat-header-cell *matHeaderCellDef style="flex: 0 0 140px">{{'TABLE.ACTION' | translate}}</mat-header-cell>
+					<mat-cell *matCellDef="let role"  style="flex: 0 0 140px">
+						<button  ktHasPermissions [functionCode]="'ROLE'" [serviceCode]="'ROLE_AUTHORITY'" mat-icon-button color="primary" matTooltip="Phân quyền" type="button"
+							[disabled]="role.isCoreRole" (click)="roleUsers(role)">
+							<mat-icon> vpn_key</mat-icon>
+						</button>
+						<button  ktHasPermissions [functionCode]="'ROLE'" [serviceCode]="'ROLE_MODIFY'" mat-icon-button color="primary" matTooltip="{{ role.isCoreRole ? 'Xem' : 'Sửa'}} quyền"
+							(click)="editRole(role)">
+							<mat-icon>
+								{{ role.isCoreRole ? 'visibility' : 'create' }}
+							</mat-icon>
+						</button>&nbsp;
+						<button ktHasPermissions [functionCode]="'ROLE'" [serviceCode]="'ROLE_DELETE'" mat-icon-button color="warn" matTooltip="Xóa quyền" type="button"
+							[disabled]="role.isCoreRole" (click)="deleteRole(role)">
+							<mat-icon>delete</mat-icon>
+						</button>
+					</mat-cell>
+				</ng-container>
+
+				<mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+
+				<mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+			</mat-table>
+
+			<div class="mat-table__message" *ngIf="!dataSource.hasItems">{{'TABLE.NODATA' | translate}}</div>
+			<!-- Message for empty data  -->
+			<div class="mat-table__message" *ngIf="dataSource.isPreloadTextViewed$ | async">{{'TABLE.WAIT' | translate}}</div>
+		</div>
+
+		<!-- start: BOTTOM -->
+		<div class="mat-table__bottom">
+			<!-- MATERIAL SPINNER | Url: 'https://material.angular.io/components/progress-spinner/overview' -->
+			<mat-spinner [diameter]="20" *ngIf="dataSource.loading$ | async"></mat-spinner>
+			<!-- MATERIAL PAGINATOR | Binded to dasources -->
+			<!-- See off.documentations 'https://material.angular.io/components/paginator/overview' -->
+			<mat-paginator [pageSize]="10" (page)="pageEvent($event)" [pageSizeOptions]="[5, 10, 15]" [length]="dataSource.paginatorTotal$ | async"
+				[showFirstLastButtons]="true"></mat-paginator>
+		</div>
+		<!-- end: BOTTOM -->
+	</kt-portlet-body>
+	<!-- end::Body -->
+</kt-portlet>

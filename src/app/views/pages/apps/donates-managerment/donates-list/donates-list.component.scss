@@ -1,0 +1,30 @@
+.list-donate {
+    .mat-column-actions {
+        flex: 0 0 160px;
+    }
+    .mat-column-fundStatus {
+        flex: 0 0 90px;
+    }
+    .mat-column-fundPrice {
+        flex: 0 0 120px;
+    }
+    .mat-column-fundType {
+        flex: 0 0 80px;
+    }
+    .mat-column-fundId {
+        flex: 0 0 70px;
+    }
+    .c-btn.disabled {
+        background: #f7f8fa !important;
+    }
+    .mat-header-row {
+        .mat-column-actions, .mat-column-fundId, .mat-column-stt, .mat-column-time {
+            justify-content: center;
+        }
+    }
+    .mat-row {
+        .mat-column-stt, .mat-column-fundId {
+            justify-content: center;
+        }
+    }
+}

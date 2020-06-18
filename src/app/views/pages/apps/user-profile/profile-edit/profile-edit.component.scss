@@ -1,0 +1,163 @@
+// @import "~@ng-select/ng-select/themes/default.theme.css";
+
+.img-circle {
+	border-radius: 50%;
+	margin: auto;
+	object-fit: contain;
+	width: 100%;
+
+}
+
+
+
+
+.cursor-pointer {
+	cursor: pointer;
+}
+
+.img-thumbnail {
+	display: inline-block;
+	max-width: 100%;
+	height: 100%;
+	padding: 4px;
+	line-height: 1.42857143;
+	background-color: #fff;
+	border: 1px solid #ddd;
+	-webkit-transition: all .2s ease-in-out;
+	-o-transition: all .2s ease-in-out;
+	transition: all .2s ease-in-out;
+}
+
+.img-thumbnail:hover {
+	border: 1px solid #ddd;
+	border-radius: 0px;
+	-webkit-transition: all .2s ease-in-out;
+	-o-transition: all .2s ease-in-out;
+	transition: all .2s ease-in-out;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+	/* display: none; <- Crashes Chrome on hover */
+	-webkit-appearance: none !important;
+	margin: 0;
+	/* <-- Apparently some margin are still there even though it's hidden */
+}
+
+input[type=number] {
+	-moz-appearance: textfield !important;
+	/* Firefox */
+}
+
+
+
+.input-readonly[readonly] {
+	background-color: #f7f8fa !important;
+}
+
+.datepicker-container {
+	// position: relative;
+	display: inline-flex;
+}
+
+.datepicker-icon {
+	right: 0% !important;
+	z-index: 10;
+	// border-left: none;
+}
+
+.datepicker-input {
+	padding-right: 13%;
+}
+
+.multiselect-invalid .c-btn {
+	border-color: #fd397a;
+}
+
+.image-upload-icon {
+	text-align: center;
+	font-size: 28px;
+	// position: absolute;
+	top: calc(50% - 20px);
+	left: calc(50% - 10px);
+}
+
+.image-upload-input {
+	position: relative;
+	width: 200px;
+	height: 200px;
+	margin: auto;
+	// top: 50;
+	// left: 50;
+}
+
+
+.image-upload-input:hover img {
+	opacity: 0.3;
+	-webkit-transition: all .2s ease-in-out;
+	-o-transition: all .2s ease-in-out;
+	transition: all .2s ease-in-out;
+}
+
+.position-absolute {
+	position: absolute;
+}
+
+.position-relative {
+	position: relative;
+}
+
+.no-padding {
+	padding: 0;
+}
+
+.no-border {
+	border: none;
+}
+
+.height-auto {
+	height: auto;
+}
+
+.list-custom {
+	padding-left: 18px !important;
+	word-break: break-all;
+}
+
+.list-row-item {
+	display: flex;
+	position: relative;
+
+	&:before {
+		position: absolute;
+		content: '';
+		width: 3px;
+		height: 3px;
+		left: -10px;
+		bottom: 8px;
+		background-color: black;
+		border-radius: 50%;
+	}
+}
+
+div .c-btn {
+	display: block;
+	width: 100%;
+	height: calc(1.5em + 1.3rem + 2px);
+	padding: 0.65rem 1rem;
+	font-size: 1rem !important;
+	font-weight: 400;
+	line-height: 1.5;
+	color: #495057;
+	background-color: #fff;
+	background-clip: padding-box;
+	border: 1px solid #e2e5ec;
+	border-radius: 4px;
+	transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.selected-list .c-angle-down,
+.selected-list .c-angle-up {
+	top: calc(50% - 3px) !important;
+	/* top: 75%; */
+}

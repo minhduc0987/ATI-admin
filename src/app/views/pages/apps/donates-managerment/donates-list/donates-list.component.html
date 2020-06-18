@@ -1,0 +1,95 @@
+<kt-portlet class="list-donate">
+	<!-- PORTLET LOADING | Binded to TABLE Datasource -->
+	<!-- See prop => '~/core/_crud/models/data-sources/_base.datasource.ts' (loading$) -->
+	<kt-portlet-header [title]="'Danh sách kế hoạch tài trợ'" [class]="'kt-portlet__head--lg'" [viewLoading$]="dataSource.loading$">
+		<ng-container ktPortletTools>
+			<!-- mat-raised-button | Rectangular contained button w/ elevation  -->
+		</ng-container>
+	</kt-portlet-header>
+	<!-- end::Header -->
+	<!-- start::Body (attribute: ktPortletBody) -->
+	<kt-portlet-body>
+		<!-- start::FILTERS & GROUP ACTIONS -->
+		<div class="kt-form kt-margin-b-30">
+			<!-- start::FILTERS -->
+			<div class="kt-form__filtration">
+				<form class="row align-items-center" (ngSubmit)="search()">
+					<div class="col-md-2 kt-margin-bottom-10-mobile">
+						<angular2-multiselect [data]="donateStatusAll"  [settings]="statusSettings" name="donateStatus" [(ngModel)]="donateStatus">
+						</angular2-multiselect>
+					</div>
+					<div class="col-md-2 kt-margin-bottom-10-mobile">
+						<angular2-multiselect [data]="donateTypeAll"  [settings]="typeSettings" name="donateType" [(ngModel)]="donateType">
+						</angular2-multiselect>
+					</div>
+					<div class="col-md-2 kt-margin-bottom-10-mobile">
+						<input type="text" class="form-control" name="searchInput" [(ngModel)]="searchInput" placeholder="{{'BUTTON.SEARCH' | translate}}">
+					</div>
+					<div class="col-md-2 kt-margin-bottom-10-mobile">
+						<button type="submit" mat-raised-button color="primary">
+							<span>{{'BUTTON.SEARCH' | translate}}</span>
+						</button>
+					</div>
+				</form>
+			</div>
+		</div>
+		<div class="mat-table__wrapper">
+			<mat-table class="lmat-elevation-z8" #table [dataSource]="dataSource" matSort #sort1="matSort" matSortActive="donateId" matSortDirection="asc" matSortDisableClear>
+				<ng-container matColumnDef="stt" class="id-cell">
+					<mat-header-cell *matHeaderCellDef>{{'TABLE.NO' | translate}}</mat-header-cell>
+					<mat-cell *matCellDef="let donate; let i = index;">{{ (i+1) + (paginator.pageIndex * paginator.pageSize)}}</mat-cell>
+				</ng-container>
+				<ng-container matColumnDef="fundId">
+					<mat-header-cell *matHeaderCellDef>{{'DONATES.CODE' | translate}}</mat-header-cell>
+					<mat-cell *matCellDef="let donate">{{setCode(donate)}}</mat-cell>
+				</ng-container>
+				<ng-container matColumnDef="fundType">
+					<mat-header-cell *matHeaderCellDef>{{'DONATES.TYPE' | translate}}</mat-header-cell>
+					<mat-cell *matCellDef="let donate">{{getType(donate)}}</mat-cell>
+				</ng-container>
+				<ng-container matColumnDef="fundName">
+					<mat-header-cell *matHeaderCellDef>{{'DONATES.FUND_NAME' | translate}}</mat-header-cell>
+					<mat-cell *matCellDef="let donate">{{getName(donate)}}
+					</mat-cell>
+				</ng-container>
+				<ng-container matColumnDef="fundPrice">
+					<mat-header-cell *matHeaderCellDef>{{'DONATES.MONEY' | translate}}</mat-header-cell>
+					<mat-cell *matCellDef="let donate">{{ formatNumber(donate.fundPrice) }}</mat-cell>
+				</ng-container>
+				<ng-container matColumnDef="fundStatus">
+					<mat-header-cell *matHeaderCellDef>{{'GENERAL.STATUS' | translate}}</mat-header-cell>
+					<mat-cell *matCellDef="let donate">
+						<span class="kt-badge kt-badge--inline kt-badge--pill kt-badge--{{ getItemCssClassByStatus(donate.fundStatus) }} kt-badge--wide">{{  getItemStatusString(donate.fundStatus) }}</span>
+					</mat-cell>
+				</ng-container>
+				<ng-container matColumnDef="actions">
+					<mat-header-cell *matHeaderCellDef>{{'GENERAL.ACTIONS' | translate}}</mat-header-cell>
+					<mat-cell *matCellDef="let donate">
+						<button ktHasPermissions [functionCode]="'PLAN'" [serviceCode]="'PLAN_READ'" mat-icon-button color="primary" matTooltip="Xem" (click)="viewDonate(donate)">
+							<mat-icon>visibility</mat-icon>
+						</button>
+						<button ktHasPermissions [functionCode]="'PLAN'" [serviceCode]="'PLAN_APPROVE'" mat-icon-button color="primary" matTooltip="{{'ACTION.APPROVE' | translate}}" disabled="{{ donate.fundStatus == 'S' ||  donate.fundStatus == 'A' ? 'true' : 'false'}}" type="button" (click)="approveDonate(donate)">
+							<i class="fas fa-check-circle"></i>
+						</button>
+						<button ktHasPermissions [functionCode]="'PLAN'" [serviceCode]="'PLAN_DENY'" mat-icon-button color="warn" matTooltip="{{'ACTION.REFUSE' | translate}}" disabled="{{ donate.fundStatus == 'S' || donate.fundStatus == 'R' || donate.fundStatus == 'A' ? 'true' : 'false'}}" type="button" (click)="rejectDonate(donate)">
+							<i class="fas fa-ban"></i>
+						</button>
+						<button ktHasPermissions [functionCode]="'PLAN'" [serviceCode]="'PLAN_SPAM'" mat-icon-button color="warn" matTooltip="{{'ACTION.SPAM' | translate}}" disabled="{{ donate.fundStatus == 'S' ||  donate.fundStatus == 'A' ? 'true' : 'false'}}" type="button" (click)="spamDonate(donate)">
+							<i class="fas fa-exclamation-triangle"></i>
+						</button>
+					</mat-cell>
+				</ng-container>
+				<mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+				<mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+			</mat-table>
+			<div class="mat-table__message" *ngIf="!dataSource.hasItems">{{'TABLE.NODATA' | translate}}</div>
+			<div class="mat-table__message" *ngIf="dataSource.isPreloadTextViewed$ | async">{{'TABLE.WAIT' | translate}}</div>
+		</div>
+
+		<div class="mat-table__bottom">
+			<mat-spinner [diameter]="20" *ngIf="dataSource.loading$ | async"></mat-spinner>
+			<mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 15]" (page)="pageEvent($event)" [length]="dataSource.paginatorTotal$ | async" [showFirstLastButtons]="true"></mat-paginator>
+		</div>
+	</kt-portlet-body>
+	<!-- end::Body -->
+</kt-portlet>

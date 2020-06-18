@@ -1,0 +1,13 @@
+.roles {
+    .kt-portlet__body {
+        overflow-x: hidden;
+
+        .box-roles {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .pad15 {
+            padding: 15px !important;
+        }
+    }
+}

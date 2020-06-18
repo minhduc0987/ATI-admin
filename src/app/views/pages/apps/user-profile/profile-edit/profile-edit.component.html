@@ -1,0 +1,322 @@
+<mat-progress-bar mode="indeterminate" *ngIf="isDisable"></mat-progress-bar>
+<form [formGroup]="userProfileForm" *ngIf="USER | async as _user">
+	<!-- {{userProfileForm.value | json}} -->
+	<kt-portlet>
+		<kt-portlet-header [title]="profile" [class]="'kt-portlet__head--lg'">
+			<ng-container ktPortletTools>
+				<a [routerLink]="['/dashboard']" class="btn btn-secondary kt-margin-r-10" mat-raised-button>
+					<i class="la la-arrow-left"></i>
+					<span class="kt-hidden-mobile">{{ 'BUTTON.BACK' | translate }}</span>
+				</a>
+				<!-- <a href="javascript:;" class="btn btn-secondary kt-margin-r-10" (click)="onReset()" mat-raised-button>
+					<i class="la la-cog"></i>
+					<span class="kt-hidden-mobile">{{ 'BUTTON.RESET' | translate }}</span>
+				</a> -->
+				<button type="button" [disabled]="isDisable" class="btn btn-primary kt-margin-r-10" color="primary" (click)="onSubmit()" mat-raised-button>
+					<span>{{ 'BUTTON.SAVE' | translate }}</span>
+				</button>
+			</ng-container>
+		</kt-portlet-header>
+	</kt-portlet>
+	<!-- *ngIf="USER | async as _user" -->
+	<div class="row">
+		<div class="col-sm-12 col-md-3 col-lg-3">
+			<kt-portlet>
+				<kt-portlet-body>
+					<div class="row">
+						<div class="container text-center position-relative">
+							<span class="image-upload-icon position-absolute">
+								<i class="flaticon-photo-camera"></i>
+							</span>
+							<div class="image-upload-input ">
+								<a class=" cursor-pointer text-center ">
+									<img onError="this.src='../../../../../../assets/media/pictures/no-avatar.png'" [src]="imgURL" class="avatar img-circle img-responsive img-thumbnail" alt="avatar" (click)="uploader.click()">
+								</a>
+								<input #uploader type="file" hidden id="fileInput" name="imgUpload" (change)="uploadFile($event)" accept="image/x-png,image/gif,image/jpeg" />
+							</div>
+						</div>
+					</div>
+					<div class="kt-separator kt-separator--dashed"></div>
+					<div class="row">
+						<div class="col-md-12">
+							<table class="table">
+								<tbody>
+									<tr>
+										<th scope="row">Username</th>
+										<td>
+											<div class="text-left">{{ userName }}</div>
+										</td>
+									</tr>
+									<tr>
+										<th scope="row">Last Login</th>
+										<td>
+											<div class="text-left">{{ lastLogin | date:'dd/MM/yyyy HH:mm' }}</div>
+										</td>
+									</tr>
+									<tr>
+										<th scope="row">Role</th>
+										<td>
+											<div *ngIf="!roles" class="text-left">{{ 'USER.INFO.NO_ROLE' | translate }}</div>
+											<ul *ngIf="roles" class="list-custom">
+												<span *ngFor="let role of roles">
+													<li *ngIf="role.roleName">
+														{{ (role.roleName.length>30)? (role.roleName | slice:0:30)+'...':(role.roleName)}}
+													</li>
+												</span>
+											</ul>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+					<div class="kt-separator kt-separator--dashed"></div>
+
+				</kt-portlet-body>
+			</kt-portlet>
+		</div>
+
+		<div class="col-sm-12 col-md-9 col-lg-9">
+			<!-- Box 1: User Info -->
+			<kt-portlet>
+				<kt-portlet-header [title]="'Thông tin cá nhân'">
+				</kt-portlet-header>
+				<kt-portlet-body>
+					<div class="row">
+						<div class="col-sm-12 col-md-6 col-lg-4">
+							<div class="form-group">
+								<label>{{ 'USER.INFO.FULLNAME' | translate}}<span class="text-danger">&nbsp;*</span></label>
+								<input class="form-control" type="text" formControlName="fullname" [ngClass]="{ 
+									'is-invalid': isControlHasError('fullname','required') 
+									|| isControlHasError('fullname','maxlength')
+									|| isControlHasError('fullname','pattern') }">
+								<div *ngIf="isControlHasError('fullname','required')" class="invalid-feedback">
+									{{ 'VALIDATION.REQUIRED_FIELD' | translate }}
+								</div>
+								<div *ngIf="isControlHasError('fullname','maxlength')" class="invalid-feedback">
+									{{ 'VALIDATION.MAX_LENGTH_FIELD' | translate }} 50
+								</div>
+								<div *ngIf="isControlHasError('fullname','pattern')" class="invalid-feedback">
+									{{ 'VALIDATION.TEXT_ONLY' | translate }}
+								</div>
+							</div>
+						</div>
+						<div class="col-sm-12 col-md-6 col-lg-4">
+							<div class="form-group">
+								<label>{{ 'USER.INFO.GENDER.NAME' | translate }}<span class="text-danger">&nbsp;*</span></label>
+								<angular2-multiselect [data]="genderList" formControlName="gender" [settings]="singleSelectDropdownSettings" (onSelect)="onItemSelect($event, 'gender')" (onDeSelectAll)="onDeSelectAll('gender')" [ngClass]="{ 
+									'multiselect-invalid': isControlHasError('gender','required')}">
+								</angular2-multiselect>
+								<div *ngIf="isControlHasError('gender','required')" class="invalid-feedback" style="display: block;">
+									{{ 'VALIDATION.REQUIRED_FIELD' | translate }}
+								</div>
+							</div>
+						</div>
+						<div class="col-sm-12 col-md-6 col-lg-4">
+							<div class="form-group">
+								<label>{{ 'USER.INFO.DOB' | translate }}<span class="text-danger">&nbsp;*</span></label>
+								<div class="input-group datepicker-container position-relative">
+									<input [matDatepicker]="picker" [max]='maxDate' readonly formControlName="dob" class="form-control datepicker-input" [ngClass]="{ 
+													'is-invalid': isControlHasError('','dateNotValid') || isControlHasError('dob','required') }">
+									<mat-datepicker-toggle #datepicker class="datepicker-icon position-absolute" matSuffix [for]="picker">
+									</mat-datepicker-toggle>
+									<div *ngIf="isControlHasError('dob','required')" class="invalid-feedback" >
+										{{ 'VALIDATION.REQUIRED_FIELD' | translate }}
+									</div>
+									<div *ngIf="isControlHasError('','dateNotValid')" class="invalid-feedback">
+										{{ 'VALIDATION.DATE_NOT_VALID' | translate }}
+									</div>
+								</div>
+								<mat-datepicker #picker></mat-datepicker>
+							</div>
+						</div>
+
+						<div class="col-sm-12 col-md-6 col-lg-4">
+							<div class="form-group">
+								<label>{{ 'USER.INFO.EMAIL' | translate}} <span class="text-danger">&nbsp;*</span></label>
+								<input class="form-control" type="text" formControlName="email" [ngClass]="{ 
+									'is-invalid': isControlHasError('email','required')
+									|| isControlHasError('email','pattern')
+									|| isControlHasError('email','minlength')
+									|| isControlHasError('email','maxlength') }">
+								<div *ngIf="isControlHasError('email','required')" class="invalid-feedback">
+									{{ 'VALIDATION.REQUIRED_FIELD' | translate }}
+								</div>
+								<div *ngIf="isControlHasError('email','pattern')" class="invalid-feedback">
+									{{ 'VALIDATION.INVALID_EMAIL' | translate }}
+								</div>
+								<div *ngIf="isControlHasError('email','minlength')" class="invalid-feedback">
+									{{ 'VALIDATION.MIN_LENGTH_FIELD' | translate }} 3
+								</div>
+								<div *ngIf="isControlHasError('email','maxlength')" class="invalid-feedback">
+									{{ 'VALIDATION.MAX_LENGTH_FIELD' | translate }} 320
+								</div>
+							</div>
+						</div>
+
+						<div class="col-sm-12 col-md-6 col-lg-4">
+							<div class="form-group">
+								<label>{{ 'USER.INFO.PHONE_NUMBER' | translate}}</label>
+								<input class="form-control" type="text" formControlName="phone" maxlength="10" [ngClass]="{ 
+									'is-invalid': isControlHasError('phone','maxlength')
+									||  isControlHasError('phone','minlength')
+									||  isControlHasError('phone','pattern')
+								}">
+								<div *ngIf="isControlHasError('phone','maxlength')" class="invalid-feedback">
+									{{ 'VALIDATION.MAX_LENGTH_FIELD' | translate }} 10
+								</div>
+								<div *ngIf="isControlHasError('phone','minlength')" class="invalid-feedback">
+									{{ 'VALIDATION.REQUIRED_LENGTH' | translate }} 10
+								</div>
+								<div *ngIf="isControlHasError('phone','pattern')" class="invalid-feedback">
+									{{ 'VALIDATION.PHONE_NUMBER_NOT_VALID' | translate }}
+								</div>
+							</div>
+						</div>
+						<div class="col-sm-12 col-md-6 col-lg-4">
+							<div class="form-group">
+								<label>{{ 'USER.INFO.IDENTITY.NAME' | translate }}</label>
+								<div class="input-group">
+									<span class="col-sm-6 col-md-6 col-lg-6 no-padding">
+										<angular2-multiselect [data]="identityTypeList" formControlName="idenType" [settings]="singleSelectDropdownSettings" (onSelect)="onItemSelect($event,'idenType')" (onDeSelectAll)="onDeSelectAll('idenType')">
+										</angular2-multiselect>
+									</span>
+									<span class="col-sm-6 col-md-6 col-lg-6 no-padding">
+										<input class="form-control input-readonly" [readonly]="isIdentityReadOnly" min="0" type="text" [maxlength]="customIdenMaxLength" formControlName="identityNumber" [ngClass]="{ 
+											'is-invalid': isControlHasError('','isIdentityValid') 
+											|| isControlHasError('','isIdentityNumRequired')
+										}">
+										<div *ngIf="isControlHasError('','isIdentityNumRequired')" class="invalid-feedback">
+											{{'VALIDATION.REQUIRED_FIELD' | translate}}
+										</div>
+										<div *ngIf="isControlHasError('','isCCCDValid')" class="invalid-feedback">
+											{{'VALIDATION.CCCD_NOT_VALID' | translate}}
+										</div>
+										<div *ngIf="isControlHasError('','isCMNDValid')" class="invalid-feedback">
+											{{'VALIDATION.CMND_NOT_VALID' | translate}}
+										</div>
+										<div *ngIf="isControlHasError('','isHCValid')" class="invalid-feedback">
+											{{'VALIDATION.HC_NOT_VALID' | translate}}
+										</div>
+									</span>
+								</div>
+							</div>
+						</div>
+						<div class="col-sm-12 col-md-6 col-lg-4">
+							<div class="form-group">
+								<label>{{ 'ADDRESS.PROVINCE' | translate }}</label>
+								<angular2-multiselect [data]="provinceList" formControlName="province" [settings]="filterSelectDropdownSettings" (onSelect)="onItemSelect($event,'province')" (onDeSelectAll)="onDeSelectAll('province')">
+								</angular2-multiselect>
+							</div>
+						</div>
+
+						<div class="col-sm-12 col-md-6 col-lg-4">
+							<div class="form-group">
+								<label>{{ 'ADDRESS.DISTRICT' | translate }}</label>
+								<angular2-multiselect [data]="districtList" formControlName="district" [settings]="districtFilterSelectDropdownSettings" (onSelect)="onItemSelect($event,'district')" (onDeSelectAll)="onDeSelectAll('district')">
+								</angular2-multiselect>
+							</div>
+						</div>
+
+						<div class="col-sm-12 col-md-6 col-lg-4">
+							<div class="form-group">
+								<label>{{ 'ADDRESS.WARD' | translate }}</label>
+								<angular2-multiselect [data]="wardList" formControlName="ward" [settings]="wardFilterSelectDropdownSettings" (onSelect)="onItemSelect($event,'ward')" (onDeSelectAll)="onDeSelectAll('ward')">
+								</angular2-multiselect>
+							</div>
+						</div>
+
+						<div class="col-sm-12 col-md-12 col-lg-12">
+							<div class="form-group">
+								<label>{{ 'ADDRESS.ADDRESS_LINE' | translate }}</label>
+								<input class="form-control" type="text" formControlName="addressLine" [ngClass]="{ 
+									'is-invalid': isControlHasError('addressLine','minlength') 
+									|| isControlHasError('addressLine','maxlength')}">
+								<div *ngIf="isControlHasError('addressLine','maxlength')" class="invalid-feedback">
+									{{ 'VALIDATION.MAX_LENGTH_FIELD' | translate }} 200
+								</div>
+								<div *ngIf="isControlHasError('addressLine','minlength')" class="invalid-feedback">
+									{{ 'VALIDATION.MIN_LENGTH_FIELD' | translate }} 10
+								</div>
+							</div>
+						</div>
+
+						<div class="col-sm-12 col-md-12 col-lg-12">
+							<div class="form-group">
+								<label>{{ 'USER.INFO.ABOUT' | translate }}</label>
+								<textarea class="form-control" cols="3" formControlName="about">
+								</textarea>
+							</div>
+						</div>
+						<div class="col-sm-12 col-md-12 col-lg-12">
+							<div class="form-group">
+								<label>{{ 'USER.INFO.REFERENCE_LINK.NAME' | translate }}</label>
+								<div class="input-group">
+									<span class="col-sm-12 col-md-12 col-lg-12 no-padding">
+										<input class="form-control " type="text" formControlName="referenceLink">
+									</span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</kt-portlet-body>
+			</kt-portlet>
+
+			<!-- Box 2: Company Info -->
+			<kt-portlet>
+				<kt-portlet-header [title]="companyInfo">
+				</kt-portlet-header>
+				<kt-portlet-body>
+					<div class="row">
+						<div class="col-sm-12 col-md-6 col-lg-4">
+							<div class="form-group">
+								<label>{{ 'USER.INFO.POSITION' | translate}}</label>
+								<input class="form-control" type="text" formControlName="position" [ngClass]="{ 
+									'is-invalid': isControlHasError('position','minlength') 
+									|| isControlHasError('position','maxlength')}">
+
+								<div *ngIf="isControlHasError('position','maxlength')" class="invalid-feedback">
+									{{ 'VALIDATION.MAX_LENGTH_FIELD' | translate }} 50
+								</div>
+								<div *ngIf="isControlHasError('position','minlength')" class="invalid-feedback">
+									{{ 'VALIDATION.MIN_LENGTH_FIELD' | translate }} 3
+								</div>
+							</div>
+						</div>
+
+						<div class="col-sm-12 col-md-6 col-lg-4">
+							<div class="form-group">
+								<label>{{ 'USER.INFO.REPRESENTATIVE' | translate}}</label>
+								<input class="form-control" type="text" formControlName="representative" [ngClass]="{ 
+									'is-invalid': isControlHasError('representative','minlength') 
+									|| isControlHasError('representative','maxlength')}">
+
+								<div *ngIf="isControlHasError('representative','maxlength')" class="invalid-feedback">
+									{{ 'VALIDATION.MAX_LENGTH_FIELD' | translate }} 50
+								</div>
+								<div *ngIf="isControlHasError('representative','minlength')" class="invalid-feedback">
+									{{ 'VALIDATION.MIN_LENGTH_FIELD' | translate }} 3
+								</div>
+							</div>
+						</div>
+						<div class="col-sm-12 col-md-6 col-lg-4">
+							<div class="form-group">
+								<label>{{ 'USER.INFO.COMPANY.NAME' | translate}}</label>
+								<input class="form-control" type="text" formControlName="company" [ngClass]="{ 
+									'is-invalid': isControlHasError('company','minlength') 
+									|| isControlHasError('company','maxlength')}">
+
+								<div *ngIf="isControlHasError('company','maxlength')" class="invalid-feedback">
+									{{ 'VALIDATION.MAX_LENGTH_FIELD' | translate }} 100
+								</div>
+								<div *ngIf="isControlHasError('company','minlength')" class="invalid-feedback">
+									{{ 'VALIDATION.MIN_LENGTH_FIELD' | translate }} 10
+								</div>
+							</div>
+						</div>
+					</div>
+				</kt-portlet-body>
+			</kt-portlet>
+		</div>
+	</div>
+</form>

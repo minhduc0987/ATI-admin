@@ -1,0 +1,205 @@
+<kt-portlet class="edit-campaign">
+    <kt-portlet-header [title]="'Tạo mới chiến dịch'" class="button-donate" [class]="'kt-portlet__head--lg'">
+        <ng-container ktPortletTools id="dcndButton">
+            <button [routerLink]="['/campaigns-managerment/list']" class="btn btn-secondary kt-margin-r-10" mat-raised-button>
+                <i class="la la-arrow-left"></i>
+                <span class="kt-hidden-mobile">{{ 'BUTTON.BACK' | translate }}</span>
+            </button>
+            <button (click)="onSubmitForm()" mat-raised-button color="primary">Lưu</button>
+        </ng-container>
+    </kt-portlet-header>
+        <kt-portlet-body>
+            <kt-alert *ngIf="formErr" type="warn" [duration]="10000" [showCloseButton]="true">
+                {{ 'MESSAGE.ERROR' | translate}}
+            </kt-alert>
+            <form [formGroup]="campaignForm" (ngSubmit)="onSubmitForm()">
+                <div class="row box-content-campaign">
+                    <div class="col-2 text-title-end" [ngClass]="{ 'set-padding-b': isControlHasError('campaignProfile','required') || isControlHasError('summary','minlength') || isControlHasError('summary','maxlength')}">
+                        Ảnh đại diện
+                        <span class="text-danger">&nbsp;*</span>
+                    </div>
+                    <div class="col-10">
+                        <div class="upload-img">
+                            <input #avatarUploader type="file" onkeydown="return event.key != 'Enter';" hidden id="fileInput" name="avatar" (change)="uploadFile($event)" accept="image/*" />
+                            <div id="img-campaign" class="img-campaign" [ngClass]="{ 'border-invalid': isControlHasError('campaignProfile','required')}">
+                                <a href="javascript:;" class="image-upload-input">
+                                    <img class="img-object-fit" onError="this.src='../../../../../../assets/media/pictures/no-image.png'" [src]="imgURL" (click)="avatarUploader.click()">
+                                </a>
+                                <div class="image-upload-icon">
+                                    <i class="flaticon-photo-camera fa-2x"></i>
+                                </div>
+                            </div>
+                            <div class="text-detail">
+                                {{'DCND.AVATAR_CHOOSE' | translate}}
+                            </div>
+                        </div>
+                        <div *ngIf="isControlHasError('campaignProfile','required')" class="invalid-feedback">
+                            {{ 'VALIDATION.REQUIRED_FIELD' | translate }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row box-content-campaign">
+                    <div class="col-2 text-title-end">
+                        {{ 'CAMPAIGNS.CODE' | translate }}
+                        <span class="text-danger">&nbsp;*</span>
+                    </div>
+                    <div class="col-10">
+                        <input type="text" class="form-control campaign-id" formControlName="campaignCode">
+                        <mat-checkbox color="primary" formControlName="index_view">Hiển thị trang chủ?</mat-checkbox>
+                    </div>
+                </div>
+                <div class="row box-content-campaign">
+                    <div class="col-2 text-title-end" [ngClass]="{ 'set-padding-b': isControlHasError('title','required') || isControlHasError('title','minlength') || isControlHasError('title','maxlength')}">
+                        {{ 'GENERAL.TITLE' | translate }}
+                        <span class="text-danger">&nbsp;*</span>
+                    </div>
+                    <div class="col-10">
+                        <input type="text" onkeydown="return event.key != 'Enter';" class="form-control" formControlName="title" [ngClass]="{ 'is-invalid': isControlHasError('title','required') || isControlHasError('title','minlength') || isControlHasError('title','maxlength')}">
+                        <div *ngIf="isControlHasError('title','required')" class="invalid-feedback">
+                            {{ 'VALIDATION.REQUIRED_FIELD' | translate }}
+                        </div>
+                        <div *ngIf="isControlHasError('title','minlength')" class="invalid-feedback">
+                            {{ 'VALIDATION.MIN_LENGTH_FIELD' | translate }} 30
+                        </div>
+                        <div *ngIf="isControlHasError('title','maxlength')" class="invalid-feedback">
+                            {{ 'VALIDATION.MAX_LENGTH_FIELD' | translate }} 99
+                        </div>
+                    </div>
+                </div>
+                <div class="row box-content-campaign" >
+                    <div class="col-2 text-title-end" [ngClass]="{ 'set-padding-b': isControlHasError('summary','required') || isControlHasError('summary','minlength') || isControlHasError('summary','maxlength')}">
+                        {{ 'CAMPAIGNS.BRIEF_STORY' | translate }}
+                        <span class="text-danger">&nbsp;*</span>
+                    </div>
+                    <div class="col-10">
+                        <textarea cols="30" rows="4" class="form-control" type="text" formControlName="summary" [ngClass]="{ 'is-invalid': isControlHasError('summary','required') || isControlHasError('summary','minlength') || isControlHasError('summary','maxlength')}"></textarea>
+                        <div *ngIf="isControlHasError('summary','required')" class="invalid-feedback">
+                            {{ 'VALIDATION.REQUIRED_FIELD' | translate }}
+                        </div>
+                        <div *ngIf="isControlHasError('summary','minlength')" class="invalid-feedback">
+                            {{ 'VALIDATION.MIN_LENGTH_FIELD' | translate }} 50
+                        </div>
+                        <div *ngIf="isControlHasError('summary','maxlength')" class="invalid-feedback">
+                            {{ 'VALIDATION.MAX_LENGTH_FIELD' | translate }} 150
+                        </div>
+                    </div>
+                </div>
+                <div class="row box-content-campaign">
+                    <div class="col-2 text-title-end" [ngClass]="{ 'set-padding-b': isControlHasError('content','required') || isControlHasError('content','minlength')}">
+                        {{ 'CAMPAIGNS.CONTENT_STORY' | translate }}
+                        <span class="text-danger">&nbsp;*</span>
+                    </div>
+                    <div class="col-10" [ngClass]="{ 'is-invalid': isControlHasError('content','required') || isControlHasError('content','minlength')}">
+                        <ckeditor tagName="textarea" cols="13" [editor]="Editor" [config]="editorConfig" formControlName="content" (ready)="ckUploadImage($event)"></ckeditor>
+                        <div *ngIf="isControlHasError('content','required')" class="invalid-feedback">
+                            {{ 'VALIDATION.REQUIRED_FIELD' | translate }}
+                        </div>
+                        <div *ngIf="isControlHasError('content','minlength')" class="invalid-feedback">
+                            {{ 'VALIDATION.MAX_LENGTH_FIELD' | translate }} 100
+                        </div>
+                    </div>
+                </div>
+                <div class="row box-content-campaign">
+                    <div class="col-2 text-title-end">
+                        {{ 'CAMPAIGNS.DEMAND_DETAILS' | translate }}
+                    </div>
+                    <div class="col-10">
+                        <textarea cols="30" rows="4" class="form-control" type="text" formControlName="requestDetails"></textarea>
+                    </div>
+                </div>
+                <div class="row box-content-campaign">
+                    <div class="col-2 text-title-end" [ngClass]="{ 'set-padding-b': isControlHasError('desiredValue','required')}">
+                        {{ 'CAMPAIGNS.DESIRED_VALUE' | translate }}
+                        <span class="text-danger">&nbsp;*</span>
+                    </div>
+                    <div class="col-10">
+                        <input type="text" class="form-control" formControlName="desiredValue" [ngClass]="{ 'is-invalid': isControlHasError('desiredValue','required') || priceMin === true || priceMax === true }"  (keyup)="onChangeCurrency()" onkeypress='return event.charCode >= 48 && event.charCode <= 57'  onkeydown="return event.key != 'Enter';" onkeydown="return event.keyCode !== 69"/>
+                        <div *ngIf="isControlHasError('desiredValue','required')" class="invalid-feedback">
+                            {{ 'VALIDATION.REQUIRED_FIELD' | translate }}
+                        </div>
+                        <div *ngIf="priceMin" class="invalid-feedback">
+                            {{ 'CAMPAIGNS.MIN_MONEY' | translate }} 50000
+                        </div>
+                        <div *ngIf="priceMax" class="invalid-feedback">
+                            {{ 'CAMPAIGNS.MAX_MONEY' | translate }} 999999999999
+                        </div>
+                    </div>
+                </div>
+                <div class="row box-content-campaign">
+                    <div class="col-2 text-title-end" [ngClass]="{ 'set-padding-b': isControlHasError('startDate','required')}">
+                        {{ 'CAMPAIGNS.STARTDATE' | translate }}
+                        <span class="text-danger">&nbsp;*</span>
+                    </div>
+                    <div class="col-4">
+                        <div class="date-picker campaign-id">
+							<input matInput [matDatepicker]="startDate" onkeydown="return event.key != 'Enter';" class="input-date" placeholder="Ngày bắt đầu" formControlName="startDate" [ngClass]="{ 'border-invalid': isControlHasError('startDate','required')}">
+							<mat-datepicker-toggle matSuffix [for]="startDate"></mat-datepicker-toggle>
+							<mat-datepicker #startDate></mat-datepicker>					
+                            <div *ngIf="isControlHasError('startDate','required')" class="invalid-feedback">
+                                {{ 'VALIDATION.REQUIRED_FIELD' | translate }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-2 text-title-end" [ngClass]="{ 'set-padding-b': isControlHasError('endDate','required')}">
+                        {{ 'CAMPAIGNS.ENDDATE' | translate }}
+                        <span class="text-danger kt-margin-r-10">&nbsp;*</span>
+                    </div>
+                    <div class="col-4">
+                        <div class="date-picker campaign-id">
+							<input matInput [matDatepicker]="endDate" onkeydown="return event.key != 'Enter';" class="input-date" placeholder="Ngày kết thúc" formControlName="endDate" [ngClass]="{ 'border-invalid': isControlHasError('endDate','required')}">
+							<mat-datepicker-toggle matSuffix [for]="endDate"></mat-datepicker-toggle>
+							<mat-datepicker #endDate></mat-datepicker>					
+                            <div *ngIf="isControlHasError('endDate','required')" class="invalid-feedback">
+                                {{ 'VALIDATION.REQUIRED_FIELD' | translate }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row box-content-campaign">
+                    <div class="col-2 text-title-start">
+                        {{ 'CAMPAIGNS.ORGANIZATION_DONATE' | translate }}
+                        <span class="text-danger">&nbsp;*</span>
+                    </div>
+                    <div class="col-10">
+                        <input type="text" class="form-control" formControlName="campaignOrgDonate">
+                        <div class="kt-margin-t-10">
+                            Địa chỉ: 82, Nguyễn Du, Quận Hai Bà Trưng, Hà Nội
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="create" class="row box-content-campaign">
+                    <div class="col-2 text-title-start">
+                        {{ 'CAMPAIGNS.BENEFICIARY' | translate }}
+                        <span class="text-danger">&nbsp;*</span>
+                    </div>
+                    <div class="col-10">
+                        <button (click)="selectDcnds()" type="button" class="form-control open-dialog" [ngClass]="{ 'is-invalid': isControlHasError('humanityIds','required')}">Chọn địa chỉ nhân đạo</button>
+                        <div *ngIf="isControlHasError('humanityIds','required')" class="invalid-feedback">
+                            {{ 'VALIDATION.REQUIRED_FIELD' | translate }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row box-content-campaign">
+                    <div class="col-2 text-title-end">
+                        {{ 'CAMPAIGNS.UPLOAD_INFO_CAMPAIGN' | translate }}
+                    </div>
+                    <div class="col-10">
+                        <a href="javascript:;" style="display: inline-block;" class=" form-control btn btn-info" (click)="guarderUpload($event)">
+                            <span>Chọn Ảnh / PDF&nbsp;</span>
+                            <span><i class="flaticon-upload"></i></span>
+                        </a>
+                    </div>
+                </div>
+                <!-- <div class="row box-content-campaign">
+                    <div class="col-2 text-title-end">
+                        {{ 'CAMPAIGNS.INFO_DONATE' | translate }}
+                        <span class="text-danger">&nbsp;*</span>
+                    </div>
+                    <div class="col-10">
+                        <textarea cols="30" rows="4" class="form-control" type="text" formControlName="campaignInfoDonate"></textarea>
+                    </div>
+                </div> -->
+			</form>
+        </kt-portlet-body>
+    <!-- </form> -->
+</kt-portlet>
